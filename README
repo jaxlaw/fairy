@@ -3,6 +3,14 @@ fairy
 
 Esper made easy. Not just esper, probably a lot more good stuff will go in here.
 
+It's simple. Fairy is a command line utility that does a bunch of useful things, called Spells. 
+Here's the general usage pattern :
+
+fairy <spell> <args..>
+
+Fairy is written in Java. So when you build it you will get a jar file and you may need to 
+set up an alias for fairy="java -jar fairy.jar"
+
 For more info, visit http://fairy.ning.com
 
 
