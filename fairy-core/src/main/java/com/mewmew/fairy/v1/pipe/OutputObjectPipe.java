@@ -18,13 +18,32 @@
 */
 package com.mewmew.fairy.v1.pipe;
 
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.JsonGenerationException;
-
 import java.io.IOException;
 
-public interface Output<T>
+public abstract class OutputObjectPipe<InputType, OutputType> implements Output<InputType> , ObjectPipe<InputType, OutputType>
 {
-    public void output(T obj) throws IOException;
-    public void close() throws IOException;
+    private final Output<OutputType> output ;
+
+    public OutputObjectPipe(Output<OutputType> output)
+    {
+        this.output = output;
+    }
+
+    public void output(InputType obj) throws IOException
+    {
+        each(obj, output);
+    }
+
+    public void close() throws IOException
+    {
+        output.close();
+    }
+
+    public void open(Output<OutputType> outputTypeOutput)
+    {
+    }
+
+    public void close(Output<OutputType> outputTypeOutput)
+    {
+    }
 }

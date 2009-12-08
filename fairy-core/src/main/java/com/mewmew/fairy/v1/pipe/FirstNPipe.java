@@ -18,13 +18,28 @@
 */
 package com.mewmew.fairy.v1.pipe;
 
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.JsonGenerationException;
-
+import java.util.Iterator;
 import java.io.IOException;
 
-public interface Output<T>
+public class FirstNPipe<I, O> extends PullObjectPipeWrapper<I, O>
 {
-    public void output(T obj) throws IOException;
-    public void close() throws IOException;
+    private final int numLines;
+
+    public FirstNPipe(ObjectPipe<I, O> delgate, int numLines)
+    {
+        super(delgate);
+        this.numLines = numLines;
+    }
+
+    @Override
+    public void process(Iterator<I> input, Output<O> output) throws IOException
+    {
+        int count = 0;
+        while (input.hasNext()) {
+            delegate.each(input.next(), output);
+            if (++count > numLines) {
+                break;
+            }
+        }
+    }
 }

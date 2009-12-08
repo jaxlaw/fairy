@@ -18,47 +18,37 @@
 */
 package com.mewmew.fairy.v1.pipe;
 
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.concurrent.Exchanger;
 
-public class OutputIterator<T> implements Output<T>, Iterator<T>
+public class PullObjectPipeWrapper<InputType, OutputType> implements PullObjectPipe<InputType, OutputType>
 {
-    private volatile boolean isClosed = false ;
-    private final Exchanger<T> exchanger = new Exchanger<T>();
+    protected final ObjectPipe<InputType, OutputType> delegate;
 
-    public void output(T obj)
+    public PullObjectPipeWrapper(ObjectPipe<InputType, OutputType> delgate)
     {
-        try {
-            exchanger.exchange(obj);
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        this.delegate = delgate;
     }
 
-    public void close()
+    public final void open(Output<OutputType> output) throws IOException
     {
-        isClosed = true ;
+        delegate.open(output);
     }
 
-    public boolean hasNext()
+    public final void each(InputType input, Output<OutputType> output) throws IOException
     {
-        return !isClosed;
+        delegate.each(input, output);
     }
 
-    public T next()
+    public final void close(Output<OutputType> output) throws IOException
     {
-        try {
-            return exchanger.exchange(null);
+        delegate.close(output);
+    }
+
+    public void process(Iterator<InputType> input, Output<OutputType> output) throws IOException
+    {
+        while (input.hasNext()) {
+            each(input.next(), output);
         }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void remove()
-    {
-        throw new UnsupportedOperationException();
     }
 }

@@ -1,3 +1,21 @@
+/*
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+*/
 package com.mewmew.fairy.v1.pipe;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -6,16 +24,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutorService;
 import java.io.IOException;
 
-public abstract class MultiThreadedObjectPipe<InputType, OutputType> extends BaseObjectPipe<InputType, OutputType>
+public class MultiThreadedObjectPipe<InputType, OutputType> implements ObjectPipe<InputType, OutputType>
 {
     private final ExecutorService executor;
+    private final ObjectPipe delegate ;
 
-    public MultiThreadedObjectPipe(int numThreads)
+    public MultiThreadedObjectPipe(int numThreads, ObjectPipe delegate)
     {
-        this(numThreads, Math.min(numThreads, 50) * 100);
+        this(numThreads, Math.min(numThreads, 50) * 100, delegate);
     }
 
-    public MultiThreadedObjectPipe(int numThreads, int queueSize)
+    public MultiThreadedObjectPipe(int numThreads, int queueSize, ObjectPipe delegate)
     {
         this(new ThreadPoolExecutor(numThreads, numThreads,
                 60L, TimeUnit.SECONDS,
@@ -31,20 +50,21 @@ public abstract class MultiThreadedObjectPipe<InputType, OutputType> extends Bas
                             return false;
                         }
                     }
-                }));
+                }), delegate);
     }
 
-    public MultiThreadedObjectPipe(ExecutorService exe)
+    public MultiThreadedObjectPipe(ExecutorService exe, ObjectPipe delegate)
     {
         this.executor = exe;
+        this.delegate = delegate;
     }
 
     @Override
-    public void close(Output<OutputType> outputTypeOutput)
+    public void close(Output<OutputType> outputTypeOutput) throws IOException
     {
         try {
             /*
-             This is from experience InputType don't trust executor.shutdown and executor.awaitTermination
+             This is from experience I don't trust executor.shutdown and executor.awaitTermination
              is doing the right thing.
              */
             if (executor instanceof ThreadPoolExecutor) {
@@ -63,7 +83,12 @@ public abstract class MultiThreadedObjectPipe<InputType, OutputType> extends Bas
         }
         catch (InterruptedException e) {
         }
-        super.close(outputTypeOutput);
+        delegate.close(outputTypeOutput);
+    }
+
+    public void open(Output<OutputType> outputTypeOutput) throws IOException
+    {
+        delegate.open(outputTypeOutput);
     }
 
     @Override
@@ -74,13 +99,11 @@ public abstract class MultiThreadedObjectPipe<InputType, OutputType> extends Bas
             public void run()
             {
                 try {
-                    MultiThreadedObjectPipe.this._each(input, output);
+                    delegate.each(input, output);
                 }
                 catch (IOException e) {                    
                 }
             }
         });
     }
-
-    public abstract void _each(InputType input, Output<OutputType> output) throws IOException;
 }
