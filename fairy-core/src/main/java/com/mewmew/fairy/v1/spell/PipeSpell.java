@@ -48,7 +48,7 @@ public abstract class PipeSpell extends Spell implements Pipe
     }
 
     @Override
-    public final void cast()
+    public void cast()
     {
         before();
         process(in, getOutputStream());

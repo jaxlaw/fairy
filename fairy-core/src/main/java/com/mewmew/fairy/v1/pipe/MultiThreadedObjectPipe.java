@@ -4,20 +4,20 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutorService;
+import java.io.IOException;
 
-public class MultiThreadedOutput<T> implements Output<T>
+public abstract class MultiThreadedObjectPipe<InputType, OutputType> extends BaseObjectPipe<InputType, OutputType>
 {
-    private final Output<T> output;
     private final ExecutorService executor;
 
-    public MultiThreadedOutput(Output<T> output, int numThreads)
+    public MultiThreadedObjectPipe(int numThreads)
     {
-        this(output, numThreads, Math.min(numThreads, 50) * 100);
+        this(numThreads, Math.min(numThreads, 50) * 100);
     }
 
-    public MultiThreadedOutput(Output<T> output, int numThreads, int queueSize)
+    public MultiThreadedObjectPipe(int numThreads, int queueSize)
     {
-        this(output, new ThreadPoolExecutor(numThreads, numThreads,
+        this(new ThreadPoolExecutor(numThreads, numThreads,
                 60L, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<Runnable>(queueSize)
                 {
@@ -34,28 +34,17 @@ public class MultiThreadedOutput<T> implements Output<T>
                 }));
     }
 
-    public MultiThreadedOutput(Output<T> output, ExecutorService exe)
+    public MultiThreadedObjectPipe(ExecutorService exe)
     {
-        this.output = output;
         this.executor = exe;
     }
 
-    public void output(final T obj)
-    {
-        executor.execute(new Runnable()
-        {
-            public void run()
-            {
-                output.output(obj);
-            }
-        });
-    }
-
-    public void close()
+    @Override
+    public void close(Output<OutputType> outputTypeOutput)
     {
         try {
             /*
-             This is from experience I don't trust executor.shutdown and executor.awaitTermination
+             This is from experience InputType don't trust executor.shutdown and executor.awaitTermination
              is doing the right thing.
              */
             if (executor instanceof ThreadPoolExecutor) {
@@ -74,5 +63,24 @@ public class MultiThreadedOutput<T> implements Output<T>
         }
         catch (InterruptedException e) {
         }
+        super.close(outputTypeOutput);
     }
+
+    @Override
+    public final void each(final InputType input, final Output<OutputType> output)
+    {
+        executor.execute(new Runnable()
+        {
+            public void run()
+            {
+                try {
+                    MultiThreadedObjectPipe.this._each(input, output);
+                }
+                catch (IOException e) {                    
+                }
+            }
+        });
+    }
+
+    public abstract void _each(InputType input, Output<OutputType> output) throws IOException;
 }

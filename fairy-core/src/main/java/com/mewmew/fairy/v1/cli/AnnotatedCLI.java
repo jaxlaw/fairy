@@ -4,8 +4,6 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.mewmew.fairy.v1.cli.Param;
-import com.mewmew.fairy.v1.spell.ExampleSpell;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -18,11 +16,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
+import java.util.Map;
+import java.util.HashMap;
 
 public class AnnotatedCLI
 {
     final Options options;
     final Multimap<Class, AnnotatedOption> mappings;
+    final Map<Class, Field> args = new HashMap<Class, Field>();
     final Unsafe unsafe = stealUnsafe();
     final StringParsers parsers = new StringParsers();
 
@@ -34,6 +35,10 @@ public class AnnotatedCLI
                 Param param = field.getAnnotation(Param.class);
                 if (param != null) {
                     list.add(new AnnotatedOption(aClass, field, param));
+                }
+                Args arg = field.getAnnotation(Args.class);
+                if (arg != null) {
+                    args.put(aClass, field) ;
                 }
             }
         }
@@ -80,21 +85,21 @@ public class AnnotatedCLI
         return this;
     }
 
-    private void magicallySetField(Object obj, AnnotatedOption opt, Object value)
+    private void magicallySetField(Object obj, Field field, Object value)
     {
         if (value == null) {
             return;
         }
-        boolean wasInaccessible = !opt.field.isAccessible();
+        boolean wasInaccessible = !field.isAccessible();
         if (wasInaccessible) {
-            opt.field.setAccessible(true);
+            field.setAccessible(true);
         }
         try {
-            opt.field.set(obj, value);
+            field.set(obj, value);
         }
         catch (IllegalAccessException e) {
             System.err.println("diving into unsafe territory !");
-            long offset = unsafe.objectFieldOffset(opt.field);
+            long offset = unsafe.objectFieldOffset(field);
             if (value instanceof Integer) {
                 unsafe.putInt(obj, offset, (Integer) value);
             }
@@ -123,7 +128,7 @@ public class AnnotatedCLI
                 unsafe.putObject(obj, offset, value);
             }
         }
-        opt.field.setAccessible(!wasInaccessible);
+        field.setAccessible(!wasInaccessible);
     }
 
     public ParsedCLI parse(String... args) throws ParseException
@@ -134,15 +139,6 @@ public class AnnotatedCLI
     public void printHelp(String msg)
     {
         new HelpFormatter().printHelp(msg, options);
-    }
-
-    public static void main(String[] args) throws ParseException
-    {
-        ExampleSpell spell = new ExampleSpell();
-        new AnnotatedCLI(ExampleSpell.class)
-                .parse(new String[]{"-s", "jax", "-n", "2", "-b", "1,2,3,4"})
-                .inject(spell);
-        System.out.println(spell);
     }
 
     private static Unsafe stealUnsafe()
@@ -177,18 +173,26 @@ public class AnnotatedCLI
                     for (AnnotatedOption opt : opts) {
                         if (cmd.hasOption(opt.getOpt())) {
                             if (opt.field.getType() == boolean.class || opt.field.getType() == Boolean.class) {
-                                magicallySetField(obj, opt, true);
+                                magicallySetField(obj, opt.field, true);
                             }
                             else {
                                 String defaultValue = opt.getParam().defaultValue();
                                 if (defaultValue.length() > 0) {
-                                    magicallySetField(obj, opt, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt(), defaultValue)));
+                                    magicallySetField(obj, opt.field, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt(), defaultValue)));
                                 }
                                 else {
-                                    magicallySetField(obj, opt, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt())));
+                                    magicallySetField(obj, opt.field, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt())));
                                 }
                             }
                         }
+                    }
+                }
+                Field argField = args.get(clazz);
+                if (argField != null) {
+                    try {
+                        magicallySetField(obj, argField, cmd.getArgs());
+                    }
+                    catch (Exception e) {                        
                     }
                 }
                 clazz = clazz.getSuperclass();
