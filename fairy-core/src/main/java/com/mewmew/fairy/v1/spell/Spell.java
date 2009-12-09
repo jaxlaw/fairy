@@ -19,6 +19,8 @@
 package com.mewmew.fairy.v1.spell;
 
 import com.mewmew.fairy.v1.cli.Param;
+import com.mewmew.fairy.v1.cli.StringParser;
+import com.mewmew.fairy.v1.cli.HasParsers;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -29,7 +31,7 @@ import java.io.IOException;
 /**
  * The base class for all spells, this defines the common -o -h and -a options. 
  */
-public abstract class Spell
+public abstract class Spell implements HasParsers
 {
     @Param (desc = "output file, default standard out")
     private File outputFile ;
@@ -79,5 +81,10 @@ public abstract class Spell
     public void printHelp()
     {
         
+    }
+
+    public StringParser[] getParsers()
+    {
+        return null;
     }
 }

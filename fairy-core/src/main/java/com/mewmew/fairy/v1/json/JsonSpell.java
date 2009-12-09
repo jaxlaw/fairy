@@ -20,6 +20,7 @@ package com.mewmew.fairy.v1.json;
 
 import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.cli.Param;
+import com.mewmew.fairy.v1.cli.StringParser;
 
 import java.io.OutputStream;
 import java.io.IOException;
@@ -36,24 +37,42 @@ public abstract class JsonSpell extends BaseJsonSpell
     private static final ObjectMapper mapper = new ObjectMapper();
     private JsonOutput jsonOutput;
 
-    @Param(option = "P", name = "pretty", desc = "pretty print")
-    private boolean pretty;
+    enum OutputFormat { PRETTY, LINE, COMPACT }
 
-    @Param ( desc = "print out one json object on each line")
-    private boolean lineMode;
+    @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT")
+    private OutputFormat outputFormat;
 
     @Override
     protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
     {
         final JsonGenerator jsonGenerator = factory.createJsonGenerator(out, JsonEncoding.UTF8);
-        if (pretty) {
-            jsonGenerator.useDefaultPrettyPrinter();
-        } else if (lineMode) {
-            jsonGenerator.setPrettyPrinter(new LinePrettyPrinter());
+        switch (outputFormat) {
+            case PRETTY:
+                jsonGenerator.useDefaultPrettyPrinter();
+                break ;
+            case LINE:
+                jsonGenerator.setPrettyPrinter(new LinePrettyPrinter());
+                break ;
         }
         jsonOutput = new JsonOutput(jsonGenerator, mapper);
         return jsonOutput;
     }
 
-
+    @Override
+    public StringParser[] getParsers()
+    {
+        return new StringParser[]{new StringParser<OutputFormat>()
+        {
+            public OutputFormat parse(String v)
+            {
+                OutputFormat f = null;
+                try {
+                    return OutputFormat.valueOf(v);
+                }
+                catch (IllegalArgumentException e) {
+                    return OutputFormat.COMPACT;
+                }
+            }
+        }};
+    }
 }

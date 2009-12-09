@@ -184,6 +184,14 @@ public class AnnotatedCLI
 
         public ParsedCLI inject(Object obj)
         {
+            if (obj instanceof HasParsers) {
+                StringParser[] p = ((HasParsers) obj).getParsers();
+                if (p != null) {
+                    for (StringParser stringParser : p) {
+                        cli().addParser(stringParser) ;
+                    }
+                }
+            }
             Class clazz = obj.getClass();
             while (clazz != Object.class) {
                 Collection<AnnotatedOption> opts = mappings.get(clazz);
