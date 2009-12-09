@@ -22,9 +22,11 @@ import com.mewmew.fairy.v1.json.JsonSpell;
 import com.mewmew.fairy.v1.map.DefaultMapFunction;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
+import com.mewmew.fairy.v1.spell.Help;
 
 import java.util.Map;
 
+@Help(desc="just consume and output same json... for now")
 public class Json extends JsonSpell
 {
     @Override
