@@ -18,6 +18,8 @@
 */
 package com.mewmew.fairy.v1.pipe;
 
+import com.mewmew.fairy.v1.map.MapFunction;
+
 import java.io.IOException;
 
 public interface ObjectPipe<InputType, OutputType> extends MapFunction<InputType, OutputType>

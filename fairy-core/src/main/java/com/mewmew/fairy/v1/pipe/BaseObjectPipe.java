@@ -18,7 +18,8 @@
 */
 package com.mewmew.fairy.v1.pipe;
 
-import java.util.Iterator;
+import com.mewmew.fairy.v1.map.MapFunction;
+
 import java.io.IOException;
 
 public class BaseObjectPipe<InputType, OutputType> implements ObjectPipe<InputType, OutputType>

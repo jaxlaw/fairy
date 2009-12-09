@@ -1,4 +1,6 @@
-package com.mewmew.fairy.v1.pipe;
+package com.mewmew.fairy.v1.map;
+
+import com.mewmew.fairy.v1.pipe.Output;
 
 import java.io.IOException;
 

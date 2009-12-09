@@ -19,7 +19,7 @@
 package com.mewmew.fairy.v1.book;
 
 import com.mewmew.fairy.v1.json.JsonSpell;
-import com.mewmew.fairy.v1.pipe.DefaultMapFunction;
+import com.mewmew.fairy.v1.map.DefaultMapFunction;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 

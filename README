@@ -13,4 +13,9 @@ set up an alias for fairy="java -jar fairy.jar"
 
 For more info, visit http://fairy.ning.com
 
-
+In this second incarnation of a command line tool framework, I try to put a little more
+magic in making Spell-building a lot easier and also try to structure the code to make
+individual functionality as re-usable as possible, for instance, I really would like to
+run Esper not just from command line, but inside Hadoop as well or even in the context
+of a servlet. A lot of refactoring is going on while I try to make sense out of the
+various abstractions.

@@ -27,7 +27,7 @@ import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 import com.mewmew.fairy.v1.pipe.LineInputIterator;
-import com.mewmew.fairy.v1.pipe.MapFunction;
+import com.mewmew.fairy.v1.map.MapFunction;
 
 import java.io.IOException;
 import java.util.Map;

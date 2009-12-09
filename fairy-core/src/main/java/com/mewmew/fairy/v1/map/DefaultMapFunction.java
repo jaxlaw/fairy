@@ -16,7 +16,10 @@
   specific language governing permissions and limitations
   under the License.
 */
-package com.mewmew.fairy.v1.pipe;
+package com.mewmew.fairy.v1.map;
+
+import com.mewmew.fairy.v1.map.MapFunction;
+import com.mewmew.fairy.v1.pipe.Output;
 
 import java.io.IOException;
 

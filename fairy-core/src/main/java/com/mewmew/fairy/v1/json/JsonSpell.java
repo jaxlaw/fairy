@@ -19,8 +19,6 @@
 package com.mewmew.fairy.v1.json;
 
 import com.mewmew.fairy.v1.pipe.Output;
-import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
-import com.mewmew.fairy.v1.pipe.MapFunction;
 import com.mewmew.fairy.v1.cli.Param;
 
 import java.io.OutputStream;

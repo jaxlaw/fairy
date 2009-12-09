@@ -21,12 +21,11 @@ package com.mewmew.fairy.v1.spell;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
-import com.mewmew.fairy.v1.pipe.DefaultMapFunction;
+import com.mewmew.fairy.v1.map.DefaultMapFunction;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.IOException;
 
 public class LineSpell extends BaseLineSpell<String>
 
