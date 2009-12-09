@@ -56,7 +56,7 @@ public class AnnotatedCLI
                 }
                 Args arg = field.getAnnotation(Args.class);
                 if (arg != null) {
-                    args.put(aClass, field) ;
+                    args.put(aClass, field);
                 }
             }
         }
@@ -70,7 +70,7 @@ public class AnnotatedCLI
         });
         for (AnnotatedOption opt : list) {
             boolean hasArgs = !(opt.field.getType().equals(boolean.class) ||
-                    opt.field.getType().equals(Boolean.class));
+                                opt.field.getType().equals(Boolean.class));
             while (options.hasOption(opt.getOpt())) {
                 opt.setOpt(opt.getOpt() + opt.getOpt());
             }
@@ -194,13 +194,13 @@ public class AnnotatedCLI
                                 magicallySetField(obj, opt.field, true);
                             }
                             else {
-                                String defaultValue = opt.getParam().defaultValue();
-                                if (defaultValue.length() > 0) {
-                                    magicallySetField(obj, opt.field, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt(), defaultValue)));
-                                }
-                                else {
-                                    magicallySetField(obj, opt.field, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt())));
-                                }
+                                magicallySetField(obj, opt.field, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt())));
+                            }
+                        }
+                        else {
+                            String defaultValue = opt.getParam().defaultValue();
+                            if (defaultValue.length() > 0) {
+                                magicallySetField(obj, opt.field, parsers.parse(opt.field.getType(), cmd.getOptionValue(opt.getOpt(), defaultValue)));
                             }
                         }
                     }
@@ -210,7 +210,7 @@ public class AnnotatedCLI
                     try {
                         magicallySetField(obj, argField, cmd.getArgs());
                     }
-                    catch (Exception e) {                        
+                    catch (Exception e) {
                     }
                 }
                 clazz = clazz.getSuperclass();

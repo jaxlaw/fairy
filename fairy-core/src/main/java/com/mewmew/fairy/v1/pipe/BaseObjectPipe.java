@@ -21,11 +21,18 @@ package com.mewmew.fairy.v1.pipe;
 import java.util.Iterator;
 import java.io.IOException;
 
-public abstract class BaseObjectPipe<InputType, OutputType> implements ObjectPipe<InputType, OutputType>
+public class BaseObjectPipe<InputType, OutputType> implements ObjectPipe<InputType, OutputType>
 {
+    private final MapFunction<InputType, OutputType> mapper ;
+
+    public BaseObjectPipe(MapFunction<InputType, OutputType> mapper)
+    {
+        this.mapper = mapper;
+    }
+
     public void each(InputType s, Output<OutputType> output) throws IOException
     {
-        
+        this.mapper.each(s, output);
     }
 
     public void open(Output<OutputType> outputTypeOutput) throws IOException

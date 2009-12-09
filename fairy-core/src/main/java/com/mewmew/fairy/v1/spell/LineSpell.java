@@ -20,8 +20,8 @@ package com.mewmew.fairy.v1.spell;
 
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 import com.mewmew.fairy.v1.pipe.Output;
-import com.mewmew.fairy.v1.pipe.PullObjectPipe;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
+import com.mewmew.fairy.v1.pipe.DefaultMapFunction;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,14 +43,7 @@ public class LineSpell extends BaseLineSpell<String>
     @Override
     protected ObjectPipe<String, String> createPipe()
     {
-        return new BaseObjectPipe<String, String>()
-        {
-            @Override
-            public void each(String line, Output<String> output) throws IOException
-            {
-                output.output(line);
-            }
-        };
+        return new BaseObjectPipe<String, String>(new DefaultMapFunction<String>());
     }
 
     @Override

@@ -20,6 +20,7 @@ package com.mewmew.fairy.v1.json;
 
 import com.mewmew.fairy.v1.pipe.Output;
 import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -30,26 +31,36 @@ public class JsonOutput implements Output<Map<String, Object>>
     JsonGenerator jgen ;
     ObjectMapper mapper ;
 
-    public JsonOutput(JsonGenerator jgen)
+    public JsonOutput(JsonGenerator jgen) throws IOException
     {
-        this.jgen = jgen;
-        this.mapper = new ObjectMapper();
+        this(jgen, new ObjectMapper());
     }
 
-    public JsonOutput(JsonGenerator jgen, ObjectMapper mapper)
+    public JsonOutput(JsonGenerator jsonGenerator, ObjectMapper mapper) throws IOException
     {
-        this.jgen = jgen;
+        this.jgen = jsonGenerator;
         this.mapper = mapper;
+        jgen.writeStartArray();
     }
 
     public void output(Map<String, Object> obj) throws IOException
     {
         mapper.writeValue(jgen, obj);
-
     }
 
     public void close() throws IOException
     {
+        jgen.writeEndArray();
         jgen.close();
+    }
+
+    public JsonGenerator getJgen()
+    {
+        return jgen;
+    }
+
+    public ObjectMapper getMapper()
+    {
+        return mapper;
     }
 }

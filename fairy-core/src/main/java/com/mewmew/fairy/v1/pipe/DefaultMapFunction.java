@@ -8,7 +8,7 @@
   with the License.  You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
-
+ 
   Unless required by applicable law or agreed to in writing,
   software distributed under the License is distributed on an
   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,8 +20,10 @@ package com.mewmew.fairy.v1.pipe;
 
 import java.io.IOException;
 
-public interface ObjectPipe<InputType, OutputType> extends MapFunction<InputType, OutputType>
+public class DefaultMapFunction<T> implements MapFunction<T, T>
 {
-    void open(Output<OutputType> output) throws IOException;
-    void close(Output<OutputType> output) throws IOException;
+    public void each(T input, Output<T> output) throws IOException
+    {
+        output.output(input);
+    }
 }
