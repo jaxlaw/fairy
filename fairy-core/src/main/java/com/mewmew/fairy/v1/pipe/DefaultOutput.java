@@ -8,7 +8,7 @@
   with the License.  You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
-
+ 
   Unless required by applicable law or agreed to in writing,
   software distributed under the License is distributed on an
   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,39 +16,28 @@
   specific language governing permissions and limitations
   under the License.
 */
-package com.mewmew.fairy.v1.spell;
+package com.mewmew.fairy.v1.pipe;
 
-import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
-import com.mewmew.fairy.v1.pipe.Output;
-import com.mewmew.fairy.v1.pipe.ObjectPipe;
-import com.mewmew.fairy.v1.pipe.DefaultOutput;
-import com.mewmew.fairy.v1.map.DefaultMapFunction;
-
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class LineSpell extends BaseLineSpell<String>
-
+public class DefaultOutput implements Output<String>
 {
-    public LineSpell()
+    private final PrintStream ps;
+
+    public DefaultOutput(OutputStream out)
     {
+        this.ps = out instanceof PrintStream ? (PrintStream) out : new PrintStream(out);
     }
 
-    public LineSpell(InputStream in)
+    public void output(String obj)
     {
-        super(in);
+        ps.println(obj);
     }
 
-    @Override
-    protected ObjectPipe<String, String> createPipe()
+    public void close()
     {
-        return new BaseObjectPipe<String, String>(new DefaultMapFunction<String>());
-    }
-
-    @Override
-    protected Output<String> createOutput(OutputStream out)
-    {
-        return new DefaultOutput(out);
+        ps.flush();
+        ps.close();
     }
 }

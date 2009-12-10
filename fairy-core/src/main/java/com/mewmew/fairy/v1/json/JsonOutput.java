@@ -21,19 +21,31 @@ package com.mewmew.fairy.v1.json;
 import com.mewmew.fairy.v1.pipe.Output;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Map;
 
 public class JsonOutput implements Output<Map<String, Object>>
 {
+    static final JsonFactory FACTORY = new JsonFactory();
+    static final ObjectMapper MAPPER = new ObjectMapper();
+
     JsonGenerator jgen ;
     ObjectMapper mapper ;
 
+    public JsonOutput(OutputStream out) throws IOException
+    {
+        this(FACTORY.createJsonGenerator(out, JsonEncoding.UTF8), MAPPER);
+    }
+
     public JsonOutput(JsonGenerator jgen) throws IOException
     {
-        this(jgen, new ObjectMapper());
+        this(jgen, MAPPER);
     }
 
     public JsonOutput(JsonGenerator jsonGenerator, ObjectMapper mapper) throws IOException
@@ -62,5 +74,19 @@ public class JsonOutput implements Output<Map<String, Object>>
     public ObjectMapper getMapper()
     {
         return mapper;
+    }
+
+    public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format) throws IOException
+    {
+        final JsonGenerator jsonGenerator = FACTORY.createJsonGenerator(out, JsonEncoding.UTF8);
+        switch (format) {
+            case PRETTY:
+                jsonGenerator.useDefaultPrettyPrinter();
+                break ;
+            case LINE:
+                jsonGenerator.setPrettyPrinter(new LinePrettyPrinter());
+                break ;
+        }
+        return new JsonOutput(jsonGenerator, JsonOutput.MAPPER);
     }
 }

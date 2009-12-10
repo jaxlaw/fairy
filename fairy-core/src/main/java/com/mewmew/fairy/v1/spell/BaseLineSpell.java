@@ -72,6 +72,6 @@ public abstract class BaseLineSpell<OutputType> extends PipeSpell
         return new PullObjectPipeWrapper<String,OutputType>(pipe);
     }
     
-    protected abstract Output<OutputType> createOutput(OutputStream out);
+    protected abstract Output<OutputType> createOutput(OutputStream out) throws IOException;
     protected abstract ObjectPipe<String, OutputType> createPipe();
 }

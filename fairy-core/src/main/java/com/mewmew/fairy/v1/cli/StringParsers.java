@@ -18,10 +18,13 @@
 */
 package com.mewmew.fairy.v1.cli;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -32,6 +35,13 @@ import java.io.FileInputStream;
 
 public class StringParsers
 {
+    private static final StringParsers SINGLETION = new StringParsers();
+
+    public static StringParsers getInstance()
+    {
+        return SINGLETION;
+    }
+
     private final Map<Class, StringParser> parsers;
     private final ReflectionTranslator magicalTranslator = new ReflectionTranslator();
 
@@ -78,6 +88,13 @@ public class StringParsers
             public Double parse(String v)
             {
                 return Double.parseDouble(v);
+            }
+        });
+        map.put(long.class, new StringParser<Long>()
+        {
+            public Long parse(String v)
+            {
+                return Long.parseLong(v);
             }
         });
         map.put(boolean.class, new StringParser<Boolean>()
@@ -129,11 +146,25 @@ public class StringParsers
                 return Arrays.asList(v.split(","));
             }
         });
+        map.put(String[].class, new StringParser<String[]>()
+        {
+            public String[] parse(String v)
+            {
+                return v.split(",");
+            }
+        });
         map.put(File.class, new StringParser<File>()
         {
             public File parse(String v)
             {
                 return new File(v);
+            }
+        });
+         map.put(Pattern.class, new StringParser<Pattern>()
+        {
+            public Pattern parse(String v)
+            {
+                return Pattern.compile(v);
             }
         });
         return map;
@@ -173,4 +204,16 @@ public class StringParsers
             }
         }
     }
+
+    public static final Map<String, Class<?>> PRIMITIVE_TYPES = ImmutableMap.<String, Class<?>>builder()
+        .put("int", int.class)
+        .put("short", short.class)
+        .put("byte", byte.class)
+        .put("char", char.class)
+        .put("long", long.class)
+        .put("float", float.class)
+        .put("double", double.class)
+        .put("boolean", boolean.class)
+        .build();
+
 }

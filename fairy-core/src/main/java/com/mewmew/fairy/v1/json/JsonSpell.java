@@ -18,44 +18,25 @@
 */
 package com.mewmew.fairy.v1.json;
 
-import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.cli.Param;
 import com.mewmew.fairy.v1.cli.StringParser;
+import com.mewmew.fairy.v1.pipe.Output;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
-
-import org.codehaus.jackson.JsonEncoding;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.map.ObjectMapper;
 
 public abstract class JsonSpell extends BaseJsonSpell
 {
-    private static final JsonFactory factory = new JsonFactory();
-    private static final ObjectMapper mapper = new ObjectMapper();
     private JsonOutput jsonOutput;
 
-    enum OutputFormat { PRETTY, LINE, COMPACT }
-
-    @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT")
+    @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT", defaultValue="LINE")
     private OutputFormat outputFormat;
 
     @Override
     protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
     {
-        final JsonGenerator jsonGenerator = factory.createJsonGenerator(out, JsonEncoding.UTF8);
-        switch (outputFormat) {
-            case PRETTY:
-                jsonGenerator.useDefaultPrettyPrinter();
-                break ;
-            case LINE:
-                jsonGenerator.setPrettyPrinter(new LinePrettyPrinter());
-                break ;
-        }
-        jsonOutput = new JsonOutput(jsonGenerator, mapper);
-        return jsonOutput;
+        return JsonOutput.createOutput(out, outputFormat);
     }
 
     @Override
