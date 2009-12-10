@@ -170,6 +170,23 @@ public class StringParsers
         return map;
     }
 
+    public static Class findClass(String className)
+    {
+        Class c = PRIMITIVE_TYPES.get(className);
+        if (c != null) {
+            return c ;
+        }
+        if (!className.contains(".")) {
+            className = "java.lang."+className ;
+        }
+        try {
+            return Class.forName(className);
+        }
+        catch (ClassNotFoundException e) {
+        }
+        return null;
+    }
+
     public static class ReflectionTranslator
     {
         public <T> T translate(Class<T> to, String v)

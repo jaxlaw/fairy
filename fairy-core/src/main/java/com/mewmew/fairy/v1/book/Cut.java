@@ -21,22 +21,17 @@ package com.mewmew.fairy.v1.book;
 import com.mewmew.fairy.v1.cli.Param;
 import com.mewmew.fairy.v1.cli.StringParsers;
 import com.mewmew.fairy.v1.pipe.Output;
-import com.mewmew.fairy.v1.pipe.PullObjectPipe;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
-import com.mewmew.fairy.v1.pipe.FirstNPipe;
 import com.mewmew.fairy.v1.spell.Help;
-import com.mewmew.fairy.v1.spell.LineSpell;
 import com.mewmew.fairy.v1.spell.BaseLineSpell;
 import com.mewmew.fairy.v1.map.MapFunction;
 import com.mewmew.fairy.v1.json.JsonOutput;
 import com.mewmew.fairy.v1.json.OutputFormat;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -62,20 +57,6 @@ public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFuncti
     {
     }
 
-    public Cut(String delimiter, String[] as)
-    {
-        this.delimiter = delimiter;
-        this.regex = null;
-        this.as = as;
-    }
-
-    public Cut(Pattern regex, String[] as)
-    {
-        this.delimiter = null;
-        this.regex = regex;
-        this.as = as;
-    }
-
     public Cut(InputStream in)
     {
         super(in);
@@ -85,32 +66,7 @@ public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFuncti
     public void before()
     {
         super.before();
-        types = new Class[as.length];
-        for (int i = 0; i < as.length; i++) {
-            String a = as[i];
-            String parts[] = a.split(":");
-            if (parts.length == 2) {
-                as[i] = parts[0];
-                types[i] = findClass(parts[1]);
-            }
-        }
-    }
-
-    private Class findClass(String className)
-    {
-        Class c = StringParsers.PRIMITIVE_TYPES.get(className);
-        if (c != null) {
-            return c ;
-        }
-        if (!className.contains(".")) {
-            className = "java.lang."+className ;
-        }
-        try {
-            return Class.forName(className);
-        }
-        catch (ClassNotFoundException e) {
-        }
-        return null;
+        initTypes();
     }
 
     @Override
@@ -148,6 +104,21 @@ public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFuncti
                     putValue(map, i, values[i]);
                 }
                 mapOutput.output(map);
+            }
+        }
+    }
+
+    public void initTypes()
+    {
+        if (types == null) {
+            types = new Class[as.length];
+            for (int i = 0; i < as.length; i++) {
+                String a = as[i];
+                String parts[] = a.split(":");
+                if (parts.length == 2) {
+                    as[i] = parts[0];
+                    types[i] = StringParsers.findClass(parts[1]);
+                }
             }
         }
     }
