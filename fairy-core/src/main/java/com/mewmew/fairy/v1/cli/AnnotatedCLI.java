@@ -184,8 +184,8 @@ public class AnnotatedCLI
 
         public ParsedCLI inject(Object obj)
         {
-            if (obj instanceof HasParsers) {
-                StringParser[] p = ((HasParsers) obj).getParsers();
+            if (obj instanceof ParserProvider) {
+                StringParser[] p = ((ParserProvider) obj).getParsers();
                 if (p != null) {
                     for (StringParser stringParser : p) {
                         cli().addParser(stringParser) ;

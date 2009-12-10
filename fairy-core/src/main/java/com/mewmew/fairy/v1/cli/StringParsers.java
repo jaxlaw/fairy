@@ -153,6 +153,13 @@ public class StringParsers
                 return v.split(",");
             }
         });
+        map.put(char[].class, new StringParser<char[]>()
+        {
+            public char[] parse(String v)
+            {
+                return v.toCharArray();
+            }
+        });
         map.put(File.class, new StringParser<File>()
         {
             public File parse(String v)

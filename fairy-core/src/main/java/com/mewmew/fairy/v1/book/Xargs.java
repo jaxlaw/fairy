@@ -37,12 +37,12 @@ import org.apache.commons.lang.StringUtils;
 @Help(desc = "execute command using input")
 public class Xargs extends LineSpell implements MapFunction<String, String>
 {
-    @Param
+    @Param(desc="number of parallel processes to use")
     int processes;
+    @Param(option = "I", name = "token", defaultValue = "\\{\\}", desc="token to replace, default {}")
+    String token;
     @Args
     String cmd[];
-    @Param(option = "I", name = "token", defaultValue = "\\{\\}")
-    String token;
 
     @Override
     public void before()

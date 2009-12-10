@@ -37,9 +37,10 @@ public class Fairy
     private void doMagic()
     {
         if (args.length == 0) {
-            System.out.printf("+---------+\n");
-            System.out.printf("|Fairy %s|\n", VERSION);
-            System.out.printf("+---------+\n");
+            System.out.printf("+------------------+\n");
+            System.out.printf("|Fairy %s         |\n", VERSION);
+            System.out.printf("|       It's magic!|\n");
+            System.out.printf("+------------------+\n");
             System.out.printf(helpMsg, "<spell>");
             System.out.printf("\n\navailable spells :\n\n");
             for (Class<? extends Spell> arg : Spells.getSpells()) {
@@ -67,7 +68,7 @@ public class Fairy
                         spell.printHelp();
                     }
                     else {
-                        spell.cast();
+                        spell.run();
                     }
                 }
                 catch (Exception e) {

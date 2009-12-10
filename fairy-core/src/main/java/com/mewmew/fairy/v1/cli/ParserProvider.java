@@ -1,6 +1,6 @@
 package com.mewmew.fairy.v1.cli;
 
-public interface HasParsers
+public interface ParserProvider
 {
     public StringParser[] getParsers();
 }
