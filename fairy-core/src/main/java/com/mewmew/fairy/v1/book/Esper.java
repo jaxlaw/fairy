@@ -234,6 +234,7 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
                 for (Map<String, Object> map : groups.values()) {
                     this.delegate.output(map);
                 }
+                groups.clear();
             }
         }
     }
