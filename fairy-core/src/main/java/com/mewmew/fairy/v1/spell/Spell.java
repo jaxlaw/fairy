@@ -21,12 +21,15 @@ package com.mewmew.fairy.v1.spell;
 import com.mewmew.fairy.v1.cli.Param;
 import com.mewmew.fairy.v1.cli.StringParser;
 import com.mewmew.fairy.v1.cli.ParserProvider;
+import com.mewmew.fairy.v1.cli.AnnotatedCLI;
+import com.mewmew.fairy.v1.cli.Args;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /**
  * The base class for all spells, this defines the common -o -h and -a options. 
@@ -85,9 +88,20 @@ public abstract class Spell implements ParserProvider , Runnable
         return help;
     }
 
-    public void printHelp()
+    public void printHelp(AnnotatedCLI cli, String msg)
     {
-        
+        Help annotation = getClass().getAnnotation(Help.class);
+        String spellName = getClass().getSimpleName().toLowerCase();
+        System.err.printf("%s : %s\n%s : %s\n\n", "Spell", spellName, "Description",
+                annotation != null ? annotation.desc() : spellName);
+        cli.printHelp(msg);
+        Field f = cli.getArgs(getClass());
+        if (f != null) {
+            Args args = f.getAnnotation(Args.class);
+            if (args != null && !args.desc().isEmpty()) {
+                System.out.printf("  <args>\t\t %s\n", args.desc());
+            }
+        }
     }
 
     public StringParser[] getParsers()

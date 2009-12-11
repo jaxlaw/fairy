@@ -20,7 +20,7 @@ import org.apache.commons.codec.binary.Hex;
 @Help(desc="compute md5/sha1")
 public class MD5 extends PipeSpell
 {
-    @Param boolean sha1 = false ;
+    @Param(desc="compute SHA1 instead") boolean sha1 = false ;
 
     @Override
     public void process(InputStream in, OutputStream out)

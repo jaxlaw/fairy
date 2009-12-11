@@ -25,14 +25,13 @@ import com.mewmew.fairy.v1.cli.AnnotatedCLI;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 
 public class Fairy
 {
     private final String[] args;
-    private static final String helpMsg = "java -jar fairy.jar %s <args>";
+    private static final String helpMsg = "java -jar fairy.jar %s <options> <args>";
     private static final String VERSION = "0.1";
 
     public Fairy(String[] args)
@@ -80,12 +79,7 @@ public class Fairy
                     AnnotatedCLI cli = AnnotatedCLI.getMagicCLI(c);
                     Spell spell = cli.getInstance(c, nargs);
                     if (spell.isHelp()) {
-                        Help annotation = c.getAnnotation(Help.class);
-                        String spellName = c.getSimpleName().toLowerCase();
-                        System.err.printf("%s : %s\n%s : %s\n\n", "Spell", spellName, "Description",                               
-                                annotation != null ? annotation.desc() : spellName);
-                        cli.printHelp(String.format(helpMsg, spellName));
-                        spell.printHelp();
+                        spell.printHelp(cli, String.format(helpMsg, args[0]));
                     }
                     else {
                         spell.run();

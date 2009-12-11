@@ -41,7 +41,7 @@ public class Xargs extends LineSpell implements MapFunction<String, String>
     int processes;
     @Param(option = "I", name = "token", defaultValue = "\\{\\}", desc="token to replace, default {}")
     String token;
-    @Args
+    @Args (desc="the command to run")
     String cmd[];
 
     @Override

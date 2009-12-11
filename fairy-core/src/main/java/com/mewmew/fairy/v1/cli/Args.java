@@ -27,4 +27,5 @@ import java.lang.annotation.ElementType;
 @Target({ ElementType.FIELD })
 public @interface Args
 {
+    String desc() default "";
 }

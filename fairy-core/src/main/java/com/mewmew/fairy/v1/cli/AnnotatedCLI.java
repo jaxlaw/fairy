@@ -231,4 +231,9 @@ public class AnnotatedCLI
             return AnnotatedCLI.this;
         }
     }
+
+    public Field getArgs(Class c)
+    {
+        return args.get(c);
+    }
 }
