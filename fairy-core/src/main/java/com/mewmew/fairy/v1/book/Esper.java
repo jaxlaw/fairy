@@ -84,6 +84,22 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
         provider.getEPRuntime().sendEvent(input, "S");
     }
 
+    public void open(Output<Map<String, Object>> mapOutput) throws IOException
+    {
+
+    }
+
+    public void close(Output<Map<String, Object>> mapOutput) throws IOException
+    {
+        mapOutput.close();
+    }
+
+    @Override
+    protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
+    {
+        return outputWrapper = new OutputWrapper(super.createOutput(out));
+    }    
+
     private void registerEventAndStatement(Map<String, Object> input, final Output<Map<String, Object>> mapOutput)
     {
         Properties type = new Properties();
@@ -173,35 +189,6 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
         else {
             groupBy = null;
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new Esper("select count(*), com.mewmew.fairy.v1.book.Esper.bucket(k) as k1 from S group by com.mewmew.fairy.v1.book.Esper.bucket(k)").registerEventAndStatement(ImmutableMap.<String, Object>builder()
-                .put("k", "value")
-                .put("n", 1)
-                .build(), null);
-    }
-
-    public static int bucket(String v)
-    {
-        return 0;
-    }
-
-    public void open(Output<Map<String, Object>> mapOutput) throws IOException
-    {
-
-    }
-
-    public void close(Output<Map<String, Object>> mapOutput) throws IOException
-    {
-        mapOutput.close();
-    }
-
-    @Override
-    protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
-    {
-        return outputWrapper = new OutputWrapper(super.createOutput(out));
     }
 
     private class OutputWrapper implements Output<Map<String, Object>>
