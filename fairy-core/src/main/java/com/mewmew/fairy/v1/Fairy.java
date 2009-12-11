@@ -23,6 +23,12 @@ import com.mewmew.fairy.v1.spell.Spell;
 import com.mewmew.fairy.v1.spell.Help;
 import com.mewmew.fairy.v1.cli.AnnotatedCLI;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
+
 public class Fairy
 {
     private final String[] args;
@@ -42,8 +48,22 @@ public class Fairy
             System.out.printf("|       It's magic!|\n");
             System.out.printf("+------------------+\n");
             System.out.printf(helpMsg, "<spell>");
-            System.out.printf("\n\navailable spells :\n\n");
-            for (Class<? extends Spell> arg : Spells.getSpells()) {
+            System.out.printf("\n\navailable spells :\n");
+
+            List<Class<? extends Spell>> list = new ArrayList<Class<? extends Spell>>(Spells.getSpells());
+            Collections.sort(list, new Comparator<Class<? extends Spell>>()
+            {
+                public int compare(Class<? extends Spell> o1, Class<? extends Spell> o2)
+                {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
+            Package pkg = null;
+            for (Class<? extends Spell> arg : list) {
+                if (pkg == null || pkg != arg.getPackage()) {
+                    pkg = arg.getPackage() ;
+                    System.out.printf("\n%s:\n\n", pkg.getName());
+                }
                 Help help = arg.getAnnotation(Help.class);
                 System.out.printf("%20s - %s ...\n", arg.getSimpleName().toLowerCase(), help != null ? help.desc() : "");
             }

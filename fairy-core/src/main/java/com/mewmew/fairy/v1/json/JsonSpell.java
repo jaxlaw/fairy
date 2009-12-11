@@ -25,18 +25,26 @@ import com.mewmew.fairy.v1.pipe.Output;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.Arrays;
 
-public abstract class JsonSpell extends BaseJsonSpell
+public abstract class JsonSpell extends BaseJsonSpell<Map<String, Object>>
 {
     private JsonOutput jsonOutput;
 
-    @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT", defaultValue="LINE")
+    @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT, TAB, CSV", defaultValue="LINE")
     private OutputFormat outputFormat;
+
+    @Param(desc="specify column order for TAB and CSV, comma sepearted list of column names")
+    private String[] columnOrder;
 
     @Override
     protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
     {
-        return JsonOutput.createOutput(out, outputFormat);
+        Output<Map<String, Object>> o = JsonOutput.createOutput(out, outputFormat);
+        if (columnOrder != null && o instanceof DelimitedOutput) {
+            ((DelimitedOutput)o).setColumnOrdering(Arrays.asList(columnOrder));
+        }
+        return o ;
     }
 
     @Override

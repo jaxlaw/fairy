@@ -19,4 +19,4 @@
 package com.mewmew.fairy.v1.json;
 
 public enum OutputFormat
-{ PRETTY, LINE, COMPACT }
+{ PRETTY, LINE, COMPACT, TAB, CSV, WIKI }

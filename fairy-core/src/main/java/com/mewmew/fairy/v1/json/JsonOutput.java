@@ -63,6 +63,7 @@ public class JsonOutput implements Output<Map<String, Object>>
     public void close() throws IOException
     {
         jgen.writeEndArray();
+        jgen.writeRawValue("\n");
         jgen.close();
     }
 
@@ -78,15 +79,23 @@ public class JsonOutput implements Output<Map<String, Object>>
 
     public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format) throws IOException
     {
-        final JsonGenerator jsonGenerator = FACTORY.createJsonGenerator(out, JsonEncoding.UTF8);
+        JsonGenerator jsonGenerator ;
         switch (format) {
             case PRETTY:
+                jsonGenerator = FACTORY.createJsonGenerator(out, JsonEncoding.UTF8);
                 jsonGenerator.useDefaultPrettyPrinter();
-                break ;
+                return new JsonOutput(jsonGenerator, JsonOutput.MAPPER);
             case LINE:
+                jsonGenerator = FACTORY.createJsonGenerator(out, JsonEncoding.UTF8);
                 jsonGenerator.setPrettyPrinter(new LinePrettyPrinter());
-                break ;
+                return new JsonOutput(jsonGenerator, JsonOutput.MAPPER);
+            case CSV:
+                return new DelimitedOutput(out, ",");
+            case TAB:
+                return new DelimitedOutput(out, "\t");
+            case WIKI:
+                return new DelimitedOutput(out, "|", "|", "|");
         }
-        return new JsonOutput(jsonGenerator, JsonOutput.MAPPER);
+        throw new IllegalArgumentException(String.format("unknown output format %s", format));        
     }
 }

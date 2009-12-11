@@ -23,6 +23,7 @@ import com.mewmew.fairy.v1.spell.Spell;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.Collection;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 import java.io.File;
@@ -47,7 +48,7 @@ public class Spells
         return spell;
     }
 
-    public static Iterable<Class<? extends Spell>> getSpells()
+    public static Collection<Class<? extends Spell>> getSpells()
     {
         return spells.values();
     }

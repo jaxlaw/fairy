@@ -20,6 +20,7 @@ package com.mewmew.fairy.v1.pipe;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class PullObjectPipeWrapper<InputType, OutputType> implements PullObjectPipe<InputType, OutputType>
 {
@@ -48,7 +49,11 @@ public class PullObjectPipeWrapper<InputType, OutputType> implements PullObjectP
     public void process(Iterator<InputType> input, Output<OutputType> output) throws IOException
     {
         while (input.hasNext()) {
-            each(input.next(), output);
+            try {
+                each(input.next(), output);
+            }
+            catch (NoSuchElementException e) {                
+            }
         }
     }
 }

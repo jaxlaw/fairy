@@ -19,3 +19,26 @@ individual functionality as re-usable as possible, for instance, I really would 
 run Esper not just from command line, but inside Hadoop as well or even in the context
 of a servlet. A lot of refactoring is going on while I try to make sense out of the
 various abstractions.
+
+To build :
+
+1. Get and install latest Apache Maven ( version 2+ )
+2. Setup maven to point to at least these repositories in the <repositories> section
+   in your ~/.m2/settings.xml
+
+<repository>
+    <id>codehaus</id>
+    <url>http://repository.codehaus.org/</url>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+</repository>
+<repository>
+    <id>apache</id>
+    <url>http://repo1.maven.org/maven2/</url>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+</repository>
+
+3. mvn clean install

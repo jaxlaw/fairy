@@ -47,7 +47,7 @@ public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFuncti
     private Pattern regex;
 
     @Param(desc = "comman separated list of column names")
-    private String as[];
+    private String as[] = new String[0];
     private Class types[] ;
 
     @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT", defaultValue = "LINE")
