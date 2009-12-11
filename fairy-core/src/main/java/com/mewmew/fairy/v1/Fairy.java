@@ -61,7 +61,7 @@ public class Fairy
             for (Class<? extends Spell> arg : list) {
                 if (pkg == null || pkg != arg.getPackage()) {
                     pkg = arg.getPackage() ;
-                    System.out.printf("\n%s:\n\n", pkg.getName());
+                    System.out.printf("\nIn %s:\n\n", pkg.getName());
                 }
                 Help help = arg.getAnnotation(Help.class);
                 System.out.printf("%20s - %s ...\n", arg.getSimpleName().toLowerCase(), help != null ? help.desc() : "");
