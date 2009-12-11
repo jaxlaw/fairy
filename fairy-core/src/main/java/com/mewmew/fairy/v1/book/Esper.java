@@ -6,6 +6,7 @@ import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.cli.Param;
 import com.mewmew.fairy.v1.spell.Help;
+import com.mewmew.fairy.v1.esperudf.Elf;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EPServiceProviderManager;
@@ -107,6 +108,7 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
             type.put(entry.getKey(), entry.getValue().getClass().getName());
         }
         provider.getEPAdministrator().getConfiguration().addEventType("S", type);
+        provider.getEPAdministrator().getConfiguration().addImport(Elf.class.getPackage().getName()+".*");
         stmtModel = provider.getEPAdministrator().compileEPL(query);
         statement = provider.getEPAdministrator().create(stmtModel);
         statement.addListener(new UpdateListener()

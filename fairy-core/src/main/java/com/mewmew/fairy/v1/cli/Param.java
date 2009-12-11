@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
+@Target({ ElementType.FIELD , ElementType.PARAMETER})
 public @interface Param
 {
     String desc() default "";

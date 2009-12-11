@@ -31,7 +31,7 @@ public abstract class JsonSpell extends BaseJsonSpell<Map<String, Object>>
 {
     private JsonOutput jsonOutput;
 
-    @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT, TAB, CSV", defaultValue="LINE")
+    @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT, TAB, CSV, WIKI", defaultValue="LINE")
     private OutputFormat outputFormat;
 
     @Param(desc="specify column order for TAB and CSV, comma sepearted list of column names")

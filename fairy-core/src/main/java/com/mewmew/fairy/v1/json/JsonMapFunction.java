@@ -16,22 +16,15 @@
   specific language governing permissions and limitations
   under the License.
 */
-package com.mewmew.fairy.v1.book;
+package com.mewmew.fairy.v1.json;
 
-import com.mewmew.fairy.v1.json.JsonSpell;
-import com.mewmew.fairy.v1.map.DefaultMapFunction;
-import com.mewmew.fairy.v1.pipe.ObjectPipe;
-import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
-import com.mewmew.fairy.v1.spell.Help;
+import com.mewmew.fairy.v1.map.MapFunction;
+import com.mewmew.fairy.v1.pipe.Output;
 
 import java.util.Map;
+import java.io.IOException;
 
-@Help(desc="just consume and output same json... for now")
-public class Json extends JsonSpell
+public abstract class JsonMapFunction implements MapFunction<Map<String, Object>, Map<String, Object>>
 {
-    @Override
-    protected ObjectPipe<Map<String, Object>, Map<String, Object>> createPipe()
-    {
-        return new BaseObjectPipe<Map<String, Object>, Map<String, Object>>(new DefaultMapFunction<Map<String, Object>>());
-    }
+    public abstract void each(Map<String, Object> input, Output<Map<String, Object>> mapOutput) throws IOException;
 }

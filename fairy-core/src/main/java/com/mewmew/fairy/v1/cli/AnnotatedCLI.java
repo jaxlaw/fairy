@@ -30,6 +30,8 @@ import org.apache.commons.cli.ParseException;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,6 +60,9 @@ public class AnnotatedCLI
                 if (arg != null) {
                     args.put(aClass, field);
                 }
+            }
+            for (Constructor ctor : aClass.getConstructors()) {
+                ctor.getParameterTypes() ;
             }
         }
         options = new Options();
