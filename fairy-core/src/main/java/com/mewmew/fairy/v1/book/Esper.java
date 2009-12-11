@@ -5,6 +5,7 @@ import com.mewmew.fairy.v1.map.MapFunction;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.cli.Param;
+import com.mewmew.fairy.v1.spell.Help;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EPServiceProviderManager;
@@ -28,6 +29,7 @@ import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 
+@Help(desc = "run stream query on command line !")
 public class Esper extends JsonSpell implements MapFunction<Map<String, Object>, Map<String, Object>>,
         ObjectPipe<Map<String, Object>, Map<String, Object>>
 {
