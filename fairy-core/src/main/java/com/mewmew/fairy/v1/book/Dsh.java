@@ -1,4 +1,4 @@
-package com.killusr1.fairy.v1.book;
+package com.mewmew.fairy.v1.book;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
@@ -31,8 +31,9 @@ import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.spell.BaseLineSpell;
+import com.mewmew.fairy.v1.spell.Help;
 
-
+@Help(desc = "run a command on a set of remote hosts")
 public class Dsh extends BaseLineSpell<Map<String, Object>> 
   implements MapFunction<String, Map<String, Object>> {
 
