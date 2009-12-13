@@ -90,6 +90,13 @@
             <artifactId>joda-time</artifactId>
             <version>1.6</version>
         </dependency>
+        <dependency>
+        	<groupId>com.jcraft</groupId>
+        	<artifactId>jsch</artifactId>
+        	<version>0.1.42</version>
+        	<type>jar</type>
+        	<scope>compile</scope>
+        </dependency>
 
     </dependencies>
 
