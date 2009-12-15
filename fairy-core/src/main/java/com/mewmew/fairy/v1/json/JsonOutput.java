@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
 
 public class JsonOutput implements Output<Map<String, Object>>
 {
@@ -79,6 +81,11 @@ public class JsonOutput implements Output<Map<String, Object>>
 
     public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format) throws IOException
     {
+        return createOutput(out, format, null);
+    }
+
+    public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format, String[] columnOrder) throws IOException
+    {
         JsonGenerator jsonGenerator ;
         switch (format) {
             case PRETTY:
@@ -90,11 +97,11 @@ public class JsonOutput implements Output<Map<String, Object>>
                 jsonGenerator.setPrettyPrinter(new LinePrettyPrinter());
                 return new JsonOutput(jsonGenerator, JsonOutput.MAPPER);
             case CSV:
-                return new DelimitedOutput(out, ",");
+                return new DelimitedOutput(out, ",").setColumnOrdering(Arrays.asList(columnOrder));
             case TAB:
-                return new DelimitedOutput(out, "\t");
+                return new DelimitedOutput(out, "\t").setColumnOrdering(Arrays.asList(columnOrder));
             case WIKI:
-                return new DelimitedOutput(out, "|", "|", "|");
+                return new DelimitedOutput(out, "|", "|", "|").setColumnOrdering(Arrays.asList(columnOrder));
         }
         throw new IllegalArgumentException(String.format("unknown output format %s", format));        
     }
