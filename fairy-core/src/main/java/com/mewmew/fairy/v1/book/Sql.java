@@ -76,7 +76,7 @@ public class Sql extends Spell
         }
         if (register != null) {
             if (jdbcUrl == null || user == null || password == null) {
-                System.err.printf("mssing jdbcUrl/user/password !\n");
+                System.err.printf("missing jdbcUrl/user/password !\n");
                 return;
             }
             Map<String, Object> json = new HashMap<String, Object>();
@@ -101,12 +101,12 @@ public class Sql extends Spell
                     runSql((String) dbInfo.get("driver"), (String) dbInfo.get("jdbcUrl"), (String) dbInfo.get("user"), (String) dbInfo.get("password"));
                 }
                 else {
-                    System.err.printf("db name %s is not registered !", db);
+                    System.err.printf("db name %s is not registered !\n", db);
                 }
             }
             else {
                 if (jdbcUrl == null || user == null || password == null) {
-                    System.err.printf("mssing jdbcUrl/user/password !\n");
+                    System.err.printf("missing jdbcUrl/user/password !\n");
                     return;
                 }
                 runSql(driver, jdbcUrl, user, password);
