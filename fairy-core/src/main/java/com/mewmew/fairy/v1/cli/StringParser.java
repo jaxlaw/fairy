@@ -18,6 +18,10 @@
 */
 package com.mewmew.fairy.v1.cli;
 
+/**
+ * Parse a string into T.
+ * @param <T>
+ */
 public interface StringParser<T>
 {
     T parse(String v);

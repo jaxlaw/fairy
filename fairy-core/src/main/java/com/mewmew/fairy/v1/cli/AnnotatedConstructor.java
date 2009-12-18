@@ -29,6 +29,7 @@ class AnnotatedConstructor
 
     public Object newInstance(AnnotatedCLI.ParsedCLI cli) throws Exception
     {
+        // TODO : may be move this back to AnnotatedCLI ?
         Object param[] = new Object[params.size()];
         for (int i = 0; i < params.size(); i++) {
             AnnotatedParam ap = params.get(i);

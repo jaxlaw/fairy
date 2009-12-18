@@ -23,6 +23,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
+/**
+ * To annotate a field or constructor parameter as a command line argument.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD , ElementType.PARAMETER})
 public @interface Param

@@ -25,7 +25,6 @@ import com.mewmew.fairy.v1.pipe.Output;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import java.util.Arrays;
 
 public abstract class JsonSpell extends BaseJsonSpell<Map<String, Object>>
 {

@@ -30,9 +30,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
 import java.io.File;
-import java.io.InputStream;
-import java.io.FileInputStream;
 
+/**
+ * A collection of StringParsers. Does some magical parsing via reflection as well.
+ */
 public class StringParsers
 {
     private static final StringParsers SINGLETION = new StringParsers();
@@ -47,7 +48,7 @@ public class StringParsers
 
     public StringParsers()
     {
-        this.parsers = StringParsers.defaultTranslators();
+        this.parsers = StringParsers.defaultParsers();
     }
 
     public StringParsers addParser(StringParser t)
@@ -73,7 +74,7 @@ public class StringParsers
         }
     }
 
-    public static Map<Class, StringParser> defaultTranslators()
+    public static Map<Class, StringParser> defaultParsers()
     {
         Map<Class, StringParser> map = new HashMap<Class, StringParser>();
         map.put(int.class, new StringParser<Integer>()

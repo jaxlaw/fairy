@@ -26,6 +26,10 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Simple class that turn any JSON Array in a stream into an iterator.
+ * @param <T>
+ */
 public class JsonArrayIterator<T> implements Iterator<T>
 {
     T curr;

@@ -18,6 +18,9 @@
 */
 package com.mewmew.fairy.v1.esperudf;
 
+/**
+ * Histogram utility ( registered with esper as UDF ).
+ */
 public class Bucket
 {
     public static long of(long n, long b1)

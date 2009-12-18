@@ -39,6 +39,10 @@ import java.util.Stack;
 import java.util.Map;
 import java.util.HashMap;
 
+/*
+ * Lots of magic in here. You probably don't want to read it. Just treat this as a black box.
+ * This is looking more and more like Guice...
+ */
 public class AnnotatedCLI
 {
     final Options options;

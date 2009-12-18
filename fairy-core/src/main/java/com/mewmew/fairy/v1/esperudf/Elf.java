@@ -27,6 +27,9 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Elf is yet another magical creature that provides a bunch of useful magic ( registered with esper as UDF ). 
+ */
 public class Elf
 {
     public static String toString(Object obj)
