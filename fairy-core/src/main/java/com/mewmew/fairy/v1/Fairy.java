@@ -42,32 +42,7 @@ public class Fairy
     private void doMagic()
     {
         if (args.length == 0) {
-            System.out.printf("+------------------+\n");
-            System.out.printf("|Fairy %s         |\n", VERSION);
-            System.out.printf("|       It's magic!|\n");
-            System.out.printf("+------------------+\n");
-            System.out.printf(helpMsg, "<spell>");
-            System.out.printf("\n\navailable spells :\n");
-
-            List<Class<? extends Spell>> list = new ArrayList<Class<? extends Spell>>(Spells.getSpells());
-            Collections.sort(list, new Comparator<Class<? extends Spell>>()
-            {
-                public int compare(Class<? extends Spell> o1, Class<? extends Spell> o2)
-                {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            });
-            Package pkg = null;
-            for (Class<? extends Spell> arg : list) {
-                if (pkg == null || pkg != arg.getPackage()) {
-                    pkg = arg.getPackage() ;
-                    System.out.printf("\nIn %s:\n\n", pkg.getName());
-                }
-                Help help = arg.getAnnotation(Help.class);
-                System.out.printf("%20s - %s ...\n", arg.getSimpleName().toLowerCase(), help != null ? help.desc() : "");
-            }
-            System.out.println();
-            System.out.println();
+            printUsage();
         }
         else {
             String nargs[] = new String[args.length - 1];
@@ -90,10 +65,40 @@ public class Fairy
                 }
             }
             else {
-                System.err.printf("unknown spell %s", args[0]);
+                System.err.printf("unknown spell %s !\n", args[0]);
             }
         }
 
+    }
+
+    private void printUsage()
+    {
+        System.out.printf("+------------------+\n");
+        System.out.printf("|Fairy %s         |\n", VERSION);
+        System.out.printf("|       It's magic!|\n");
+        System.out.printf("+------------------+\n");
+        System.out.printf(helpMsg, "<spell>");
+        System.out.printf("\n\navailable spells :\n");
+
+        List<Class<? extends Spell>> list = new ArrayList<Class<? extends Spell>>(Spells.getSpells());
+        Collections.sort(list, new Comparator<Class<? extends Spell>>()
+        {
+            public int compare(Class<? extends Spell> o1, Class<? extends Spell> o2)
+            {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Package pkg = null;
+        for (Class<? extends Spell> arg : list) {
+            if (pkg == null || pkg != arg.getPackage()) {
+                pkg = arg.getPackage() ;
+                System.out.printf("\nIn %s:\n\n", pkg.getName());
+            }
+            Help help = arg.getAnnotation(Help.class);
+            System.out.printf("%20s - %s ...\n", arg.getSimpleName().toLowerCase(), help != null ? help.desc() : "");
+        }
+        System.out.println();
+        System.out.println();
     }
 
     public static void main(String[] args)

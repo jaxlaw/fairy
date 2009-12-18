@@ -18,7 +18,7 @@
 */
 package com.mewmew.fairy.v1.json.map;
 
-import com.mewmew.fairy.v1.json.JsonMapFunction;
+import com.mewmew.fairy.v1.json.map.JsonMapFunction;
 import com.mewmew.fairy.v1.pipe.Output;
 
 import java.util.Map;

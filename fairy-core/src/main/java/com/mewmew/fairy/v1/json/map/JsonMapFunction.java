@@ -16,7 +16,7 @@
   specific language governing permissions and limitations
   under the License.
 */
-package com.mewmew.fairy.v1.json;
+package com.mewmew.fairy.v1.json.map;
 
 import com.mewmew.fairy.v1.map.MapFunction;
 import com.mewmew.fairy.v1.pipe.Output;
