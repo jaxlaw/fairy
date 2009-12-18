@@ -18,41 +18,33 @@
 */
 package com.mewmew.fairy.v1.pipe;
 
+import com.mewmew.fairy.v1.map.MapFunction;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class PullObjectPipeWrapper<InputType, OutputType> implements PullObjectPipe<InputType, OutputType>
+public class PipeUtil
 {
-    protected final ObjectPipe<InputType, OutputType> delegate;
-
-    public PullObjectPipeWrapper(ObjectPipe<InputType, OutputType> delgate)
-    {
-        this.delegate = delgate;
-    }
-
-    public final void open(Output<OutputType> output) throws IOException
-    {
-        delegate.open(output);
-    }
-
-    public final void each(InputType input, Output<OutputType> output) throws IOException
-    {
-        delegate.each(input, output);
-    }
-
-    public final void close(Output<OutputType> output) throws IOException
-    {
-        delegate.close(output);
-    }
-
-    public void process(Iterator<InputType> input, Output<OutputType> output) throws IOException
+    public static <InputType, OutputType> void process(Iterator<InputType> input, MapFunction<InputType, OutputType> map, Output<OutputType> output) throws IOException
     {
         while (input.hasNext()) {
             try {
-                each(input.next(), output);
+                map.each(input.next(), output);
             }
             catch (NoSuchElementException e) {                
+            }
+        }
+    }
+
+    public static <InputType, OutputType> void processFirstN(
+            Iterator<InputType> input, MapFunction<InputType, OutputType> map, Output<OutputType> output, int numLines) throws IOException
+    {
+        int count = 0;
+        while (input.hasNext()) {
+            map.each(input.next(), output);
+            if (++count > numLines) {
+                break;
             }
         }
     }

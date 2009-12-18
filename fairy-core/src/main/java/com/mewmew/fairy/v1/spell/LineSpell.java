@@ -35,11 +35,6 @@ public class LineSpell extends BaseLineSpell<String>
     {
     }
 
-    public LineSpell(InputStream in)
-    {
-        super(in);
-    }
-
     @Override
     protected ObjectPipe<String, String> createPipe()
     {
@@ -47,7 +42,7 @@ public class LineSpell extends BaseLineSpell<String>
     }
 
     @Override
-    protected Output<String> createOutput(OutputStream out)
+    public Output<String> createOutput(OutputStream out)
     {
         return new DefaultOutput(out);
     }

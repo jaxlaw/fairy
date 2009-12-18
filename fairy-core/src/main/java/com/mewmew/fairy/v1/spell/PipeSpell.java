@@ -31,16 +31,11 @@ public abstract class PipeSpell extends Spell implements Pipe
 {
     @Param (desc= "input file, default standard in")
     private File inputFile ;
-    private InputStream in ;
+    private InputStream in ;    
 
     protected PipeSpell()
     {
         in = null;
-    }
-
-    public PipeSpell(InputStream in)
-    {
-        this.in = in;
     }
 
     @Override

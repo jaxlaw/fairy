@@ -18,8 +18,6 @@
 */
 package com.mewmew.fairy.v1.json;
 
-import com.mewmew.fairy.v1.pipe.LineInputIterator;
-
 import java.util.Map;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -27,13 +25,14 @@ import java.io.IOException;
 import java.io.File;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.commons.io.LineIterator;
 
 public class SimpleJsonIterator implements Iterator<Map<String, Object>>
 {
-    private final LineInputIterator delegate;
+    private final LineIterator delegate;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public SimpleJsonIterator(LineInputIterator delegate)
+    public SimpleJsonIterator(LineIterator delegate)
     {
         this.delegate = delegate;
     }
@@ -47,7 +46,7 @@ public class SimpleJsonIterator implements Iterator<Map<String, Object>>
     {
         Map<String, Object> map = null ;
         do {
-            String line = delegate.next();
+            String line = delegate.nextLine();
             try {
                 map = mapper.readValue(line, Map.class);
                 return map;

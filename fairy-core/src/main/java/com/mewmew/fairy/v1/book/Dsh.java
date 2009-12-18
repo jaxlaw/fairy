@@ -72,7 +72,7 @@ public class Dsh extends BaseLineSpell<Map<String, Object>>
   }
   
   @Override
-  protected Output<Map<String, Object>> createOutput(OutputStream out)
+  public Output<Map<String, Object>> createOutput(OutputStream out)
       throws IOException {
     return JsonOutput.createOutput(out, outputFormat);
   }

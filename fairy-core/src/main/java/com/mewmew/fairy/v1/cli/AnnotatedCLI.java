@@ -44,6 +44,7 @@ public class AnnotatedCLI
     final Options options;
     final Multimap<Class, AnnotatedOption> mappings;
     final Map<Class, Field> args = new HashMap<Class, Field>();
+    final Map<Class, AnnotatedConstructor> ctors = new HashMap<Class, AnnotatedConstructor>();
     final Unsafe unsafe = stealUnsafe();
     final StringParsers parsers = new StringParsers();
 
@@ -62,7 +63,21 @@ public class AnnotatedCLI
                 }
             }
             for (Constructor ctor : aClass.getConstructors()) {
-                ctor.getParameterTypes() ;
+                AnnotatedConstructor actor = new AnnotatedConstructor(aClass, ctor);
+                Class[] types = ctor.getParameterTypes();
+                Annotation[][] annotations = ctor.getParameterAnnotations();
+                for (int i = 0; i < types.length; i++) {
+                    Class type = types[i];
+                    Annotation[] ann = annotations[i];
+                    for (Annotation annotation : ann) {
+                        if (annotation instanceof Param) {
+                            actor.addParam((Param) annotation, type);
+                        }
+                    }
+                }                
+                if (actor.isValid()) {
+                    ctors.put(aClass, actor);
+                }
             }
         }
         options = new Options();
@@ -73,9 +88,20 @@ public class AnnotatedCLI
                 return new ArrayList<AnnotatedOption>();
             }
         });
+        for (AnnotatedConstructor constructor : ctors.values()) {
+            for (AnnotatedConstructor.AnnotatedParam param : constructor.getParams()) {
+                boolean hasArgs = !(param.getType().equals(boolean.class) ||
+                        param.getType().equals(Boolean.class));
+                String option = param.getParam().option();
+                while (options.hasOption(option)) {
+                    option = option + option;
+                }
+                options.addOption(option, param.getParam().name(), hasArgs, param.getParam().desc());
+            }
+        }
         for (AnnotatedOption opt : list) {
             boolean hasArgs = !(opt.field.getType().equals(boolean.class) ||
-                                opt.field.getType().equals(Boolean.class));
+                    opt.field.getType().equals(Boolean.class));
             while (options.hasOption(opt.getOpt())) {
                 opt.setOpt(opt.getOpt() + opt.getOpt());
             }
@@ -97,8 +123,16 @@ public class AnnotatedCLI
 
     public <T> T getInstance(Class<T> c, String[] args) throws Exception
     {
-        T obj = (T) c.newInstance();
-        parse(args).inject(obj);
+        AnnotatedConstructor ctor = ctors.get(c);
+        AnnotatedCLI.ParsedCLI cli = parse(args);
+        T obj;
+        if (ctor != null) {
+            obj = (T) ctor.newInstance(cli);
+        }
+        else {
+            obj = (T) c.newInstance();
+        }
+        cli.inject(obj);
         return obj;
     }
 
@@ -193,7 +227,7 @@ public class AnnotatedCLI
                 StringParser[] p = ((ParserProvider) obj).getParsers();
                 if (p != null) {
                     for (StringParser stringParser : p) {
-                        cli().addParser(stringParser) ;
+                        cli().addParser(stringParser);
                     }
                 }
             }

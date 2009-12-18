@@ -18,38 +18,42 @@
 */
 package com.mewmew.fairy.v1.spell;
 
-import com.mewmew.fairy.v1.pipe.Output;
-import com.mewmew.fairy.v1.pipe.LineInputIterator;
-import com.mewmew.fairy.v1.pipe.PullObjectPipe;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
-import com.mewmew.fairy.v1.pipe.PullObjectPipeWrapper;
+import com.mewmew.fairy.v1.pipe.Output;
+import com.mewmew.fairy.v1.pipe.PipeUtil;
+import org.apache.commons.io.LineIterator;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 public abstract class BaseLineSpell<OutputType> extends PipeSpell
 {
     Output<OutputType> output;
-    PullObjectPipe<String, OutputType> pipe;
+    ObjectPipe<String, OutputType> pipe;
 
     protected BaseLineSpell()
     {
     }
 
-    public BaseLineSpell(InputStream in)
-    {
-        super(in);
-    }
-
     @Override
     public void process(InputStream in, OutputStream out)
     {
+        LineIterator iter = null;
         try {
-            (pipe = createPullPipe(createPipe())).process(new LineInputIterator(in), output = createOutput(out));
+            output = createOutput(out);
+            pipe = createPipe();
+            iter = new LineIterator(new InputStreamReader(in));
+            PipeUtil.process(iter, pipe, output);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
+        }
+        finally {
+            if (iter != null) {
+                iter.close();
+            }
         }
     }
 
@@ -67,11 +71,6 @@ public abstract class BaseLineSpell<OutputType> extends PipeSpell
         super.after();
     }
 
-    protected PullObjectPipe<String, OutputType> createPullPipe(ObjectPipe<String, OutputType> pipe)
-    {
-        return new PullObjectPipeWrapper<String,OutputType>(pipe);
-    }
-    
-    protected abstract Output<OutputType> createOutput(OutputStream out) throws IOException;
+    public abstract Output<OutputType> createOutput(OutputStream out) throws IOException;
     protected abstract ObjectPipe<String, OutputType> createPipe();
 }

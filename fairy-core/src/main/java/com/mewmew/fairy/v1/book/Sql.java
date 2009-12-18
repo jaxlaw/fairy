@@ -52,26 +52,7 @@ public class Sql extends Spell
     public void cast()
     {
         if (list) {
-            Output<Map<String, Object>> output = null ;
-            try {
-                output = JsonOutput.createOutput(getOutputStream(), OutputFormat.PRETTY);
-                Map<String, Map<String, Object>> map = registry.loadAsMap("name");
-                for (Map<String, Object> objectMap : map.values()) {
-                    output.output(objectMap);
-                }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            finally {
-                if (output != null) {
-                    try {
-                        output.close();
-                    }
-                    catch (IOException e) {
-                    }
-                }
-            }
+            registry.list(getOutputStream(), "name");
             return ;
         }
         if (register != null) {

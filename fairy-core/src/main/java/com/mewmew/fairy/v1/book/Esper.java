@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 @Help(desc = "run stream query on command line !")
 public class Esper extends JsonSpell implements MapFunction<Map<String, Object>, Map<String, Object>>,
@@ -55,6 +57,10 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
     private OutputWrapper outputWrapper;
     private int count = 0;
 
+    static {
+        Logger.getRootLogger().setLevel(Level.WARN);
+    }
+
     public Esper()
     {
         provider = EPServiceProviderManager.getProvider("default");
@@ -64,6 +70,15 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
     {
         provider = EPServiceProviderManager.getProvider("default");
         this.query = query;
+    }
+
+    @Override
+    public void before()
+    {
+        super.before();
+        if (verbose) {
+            Logger.getRootLogger().setLevel(Level.DEBUG);
+        }
     }
 
     @Override
@@ -96,7 +111,7 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
     }
 
     @Override
-    protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
+    public Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
     {
         return outputWrapper = new OutputWrapper(super.createOutput(out));
     }    

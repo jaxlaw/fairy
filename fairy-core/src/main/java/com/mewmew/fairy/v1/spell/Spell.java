@@ -32,18 +32,18 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 /**
- * The base class for all spells, this defines the common -o -h and -a options. 
+ * The base class for all spells, this defines the common -o -h and -a options.
  */
-public abstract class Spell implements ParserProvider , Runnable
+public abstract class Spell implements ParserProvider, Runnable
 {
-    @Param (desc = "output file, default standard out")
-    private File outputFile ;
-    @Param (desc = "append to output file", defaultValue = "false")
+    @Param(desc = "output file, default standard out")
+    private File outputFile;
+    @Param(desc = "append to output file", defaultValue = "false")
     private boolean append = false;
-    @Param (desc = "print help", defaultValue = "false")
+    @Param(desc = "print help", defaultValue = "false")
     private boolean help = false;
 
-    private OutputStream out ;
+    private OutputStream out;
 
     public void before()
     {
@@ -56,14 +56,16 @@ public abstract class Spell implements ParserProvider , Runnable
             }
         }
         else {
-            out = System.out ;
+            out = System.out;
         }
     }
 
     public void after()
     {
-        try {            
-            out.close();
+        try {
+            if (out != null) {
+                out.close();
+            }
         }
         catch (IOException e) {
         }
@@ -80,7 +82,7 @@ public abstract class Spell implements ParserProvider , Runnable
     {
         return this.out;
     }
-    
+
     public abstract void cast();
 
     public boolean isHelp()

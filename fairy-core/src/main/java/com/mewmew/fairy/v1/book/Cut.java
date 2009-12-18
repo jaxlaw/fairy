@@ -23,6 +23,8 @@ import com.mewmew.fairy.v1.cli.StringParsers;
 import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
+import com.mewmew.fairy.v1.pipe.Source;
+import com.mewmew.fairy.v1.pipe.WrappedIterator;
 import com.mewmew.fairy.v1.spell.Help;
 import com.mewmew.fairy.v1.spell.BaseLineSpell;
 import com.mewmew.fairy.v1.map.MapFunction;
@@ -32,45 +34,69 @@ import com.mewmew.fairy.v1.json.OutputFormat;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.LineIterator;
+
 @Help(desc = "cut line into JSON")
-public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFunction<String, Map<String, Object>>
+public class Cut extends BaseLineSpell<Map<String, Object>>
+        implements MapFunction<String, Map<String, Object>>, Source<Map<String, Object>>
 {
-    @Param(defaultValue = "\t+")
-    private String delimiter;
+    @Param
+    private String delimiter = "\t+";
 
     @Param
     private Pattern regex;
 
-    @Param(desc = "comman separated list of column names")
-    private String as[] = new String[0];
+    private String as[] ;
     private Class types[] ;
 
     @Param(option = "O", name = "format", desc = "PRETTY, LINE, COMPACT", defaultValue = "LINE")
-    private OutputFormat outputFormat;
+    private OutputFormat outputFormat = OutputFormat.LINE;
 
-    public Cut()
+    public Cut(@Param(desc = "comman separated list of column names", option="as", name="as") String as[])
     {
+        if (as != null) {
+            this.as = as;
+            this.types = new Class[as.length];
+            for (int i = 0; i < as.length; i++) {
+                String a = as[i];
+                String parts[] = a.split(":");
+                if (parts.length == 2) {
+                    this.as[i] = parts[0];
+                    types[i] = StringParsers.findClass(parts[1]);
+                }
+            }
+        }
     }
 
-    public Cut(InputStream in)
+    public Cut(String delimiter, String[] as)
     {
-        super(in);
+        this(as);
+        this.delimiter = delimiter;
+    }
+
+    public Cut(Pattern regex, String[] as)
+    {
+        this(as);
+        this.regex = regex;
     }
 
     @Override
     public void before()
     {
         super.before();
-        initTypes();
     }
 
     @Override
-    protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
+    public Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
     {
         return JsonOutput.createOutput(out, outputFormat);
     }
@@ -80,7 +106,6 @@ public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFuncti
     {
         return new BaseObjectPipe<String, Map<String, Object>>(this);
     }
-
 
     public void each(String input, Output<Map<String, Object>> mapOutput) throws IOException
     {
@@ -108,21 +133,6 @@ public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFuncti
         }
     }
 
-    public void initTypes()
-    {
-        if (types == null) {
-            types = new Class[as.length];
-            for (int i = 0; i < as.length; i++) {
-                String a = as[i];
-                String parts[] = a.split(":");
-                if (parts.length == 2) {
-                    as[i] = parts[0];
-                    types[i] = StringParsers.findClass(parts[1]);
-                }
-            }
-        }
-    }
-
     private void putValue(Map<String, Object> map, int i, String value)
     {
         if (as != null && as.length > i) {
@@ -130,6 +140,20 @@ public class Cut extends BaseLineSpell<Map<String, Object>> implements MapFuncti
         }
         else {
             map.put("c" + i, value);
+        }
+    }
+
+    public Iterator<Map<String, Object>> createIterator(InputStream in)
+    {
+        return new WrappedIterator((Iterator<String>)new LineIterator(new InputStreamReader(in)), this);
+    }
+
+    public static void main(String[] args) throws FileNotFoundException
+    {
+        Iterator<Map<String, Object>> iter = new Cut(null).createIterator(new FileInputStream("/Users/jax/.gconsole/caches/gonsole.xno.ningops.net.txt"));
+        while (iter.hasNext()) {
+            Map<String, Object> map = iter.next();
+            System.out.println(map);
         }
     }
 }

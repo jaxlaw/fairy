@@ -1,12 +1,15 @@
 package com.mewmew.fairy.v1.json;
 
-import com.mewmew.fairy.v1.pipe.LineInputIterator;
+import com.mewmew.fairy.v1.pipe.Output;
 import org.codehaus.jackson.JsonGenerator;
+import org.apache.commons.io.LineIterator;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,9 +56,9 @@ public class JsonRegistry
     public Map<String, Map<String, Object>> loadAsMap(String key) throws IOException
     {
         Map<String, Map<String, Object>> map = new HashMap<String, Map<String, Object>>();
-        LineInputIterator iterator = new LineInputIterator(file);
+        LineIterator iterator = new LineIterator(new FileReader(file));
         while (iterator.hasNext()) {
-            Map<String, Object> json = JsonOutput.MAPPER.readValue(iterator.next(), Map.class);
+            Map<String, Object> json = JsonOutput.MAPPER.readValue(iterator.nextLine(), Map.class);
             if (json.containsKey(key)) {
                 map.put(json.get(key).toString(), json);
             }
@@ -66,9 +69,9 @@ public class JsonRegistry
     public List<Map<String, Object>> loadAsList() throws IOException
     {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        LineInputIterator iterator = new LineInputIterator(file);
+        LineIterator iterator = new LineIterator(new FileReader(file));
         while (iterator.hasNext()) {
-            Map<String, Object> json = JsonOutput.MAPPER.readValue(iterator.next(), Map.class);
+            Map<String, Object> json = JsonOutput.MAPPER.readValue(iterator.nextLine(), Map.class);
             list.add(json);
         }
         return list;
@@ -86,6 +89,30 @@ public class JsonRegistry
         jgen.flush();
         jgen.close();
         writer.close();
+    }
+
+    public void list(OutputStream os, String key)
+    {
+        Output<Map<String, Object>> output = null;
+        try {
+            output = JsonOutput.createOutput(os, OutputFormat.PRETTY);
+            Map<String, Map<String, Object>> map = loadAsMap(key);
+            for (Map<String, Object> objectMap : map.values()) {
+                output.output(objectMap);
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (output != null) {
+                try {
+                    output.close();
+                }
+                catch (IOException e) {
+                }
+            }
+        }
     }
 
 }

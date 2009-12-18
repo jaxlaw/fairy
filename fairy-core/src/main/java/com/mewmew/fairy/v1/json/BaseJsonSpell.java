@@ -18,57 +18,79 @@
 */
 package com.mewmew.fairy.v1.json;
 
-import com.mewmew.fairy.v1.pipe.Output;
-import com.mewmew.fairy.v1.pipe.LineInputIterator;
-import com.mewmew.fairy.v1.pipe.PullObjectPipe;
-import com.mewmew.fairy.v1.pipe.ObjectPipe;
-import com.mewmew.fairy.v1.pipe.PullObjectPipeWrapper;
-import com.mewmew.fairy.v1.spell.PipeSpell;
 import com.mewmew.fairy.v1.cli.Param;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Iterator;
-
-import org.codehaus.jackson.JsonFactory;
+import com.mewmew.fairy.v1.pipe.ObjectPipe;
+import com.mewmew.fairy.v1.pipe.Output;
+import com.mewmew.fairy.v1.pipe.Sink;
+import com.mewmew.fairy.v1.pipe.PipeUtil;
+import com.mewmew.fairy.v1.pipe.Source;
+import com.mewmew.fairy.v1.spell.PipeSpell;
+import com.mewmew.fairy.v1.spell.Spell;
+import com.mewmew.fairy.v1.book.Pipe;
+import org.apache.commons.io.LineIterator;
 import org.codehaus.jackson.map.MappingJsonFactory;
 
-public abstract class BaseJsonSpell<OutputType> extends PipeSpell
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ArrayList;
+
+public abstract class BaseJsonSpell<OutputType> extends PipeSpell implements Sink<OutputType>
 {
     protected static final MappingJsonFactory factory = new MappingJsonFactory();
 
     Output<OutputType> output;
-    PullObjectPipe<Map<String, Object>, OutputType> pipe;
+    ObjectPipe<Map<String, Object>, OutputType> pipe;
 
     @Param (desc = "whether input is read in via jackson streaming, otherwise expect ")
-    boolean streamingInput ;
+    boolean streaming ;
+
+    @Param (desc = "input type", option="I")
+    String inputType ;
 
     protected BaseJsonSpell()
     {
-    }
-
-    public BaseJsonSpell(InputStream in)
-    {
-        super(in);
     }
 
     @Override
     public void process(InputStream in, OutputStream out)
     {
         try {
-            Iterator<Map<String, Object>> iterator ;
-            if (streamingInput) {
-                // HACK : ugly workaround , replace me
-                iterator = (Iterator<Map<String, Object>>) (Object) new JsonArrayIterator<Map>(factory.createJsonParser(in), Map.class);
+            Iterator<Map<String, Object>> iterator = null;
+
+            if (inputType != null) {
+                JsonRegistry registry = new JsonRegistry("inputs.json");
+                Map<String, Map<String, Object>> map = registry.loadAsMap("name");
+                Map<String, Object> json = map.get(inputType);
+                Spell spell = Pipe.toSpell(((ArrayList<String>) json.get("pipe")).toArray(new String[0]));
+                if (spell instanceof Source) {
+                    // TODO : do some magic type variable checking here.
+                    iterator = ((Source)spell).createIterator(in);
+                }
+                // TODO : any pipe that is a Sink<Map<String, Object>> should also work by using PipedOutputStream chaining... 
             }
-            else {
-                iterator = new SimpleJsonIterator(new LineInputIterator(in));
+
+            if (iterator == null) {
+                if (streaming) {
+                    // HACK : ugly workaround , replace me
+                    iterator = (Iterator<Map<String, Object>>) (Object) new JsonArrayIterator<Map>(factory.createJsonParser(in), Map.class);
+                }
+                else {
+                    iterator = new SimpleJsonIterator(new LineIterator(new InputStreamReader(in)));
+                }
             }
-            (pipe = createPullPipe(createPipe())).process(iterator, output = createOutput(out));
+
+            pipe = createPipe();
+            output = createOutput(out);
+            PipeUtil.process(iterator, pipe, output);
         }
         catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -87,11 +109,5 @@ public abstract class BaseJsonSpell<OutputType> extends PipeSpell
         super.after();
     }
 
-    protected PullObjectPipe<Map<String, Object>, OutputType> createPullPipe(ObjectPipe<Map<String, Object>, OutputType> pipe)
-    {
-        return new PullObjectPipeWrapper<Map<String, Object>,OutputType>(pipe);
-    }
-
-    protected abstract Output<OutputType> createOutput(OutputStream out) throws IOException;
     protected abstract ObjectPipe<Map<String, Object>, OutputType> createPipe();
 }

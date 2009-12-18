@@ -18,19 +18,18 @@
 */
 package com.mewmew.fairy.v1.book;
 
-import com.mewmew.fairy.v1.json.JsonSpell;
-import com.mewmew.fairy.v1.json.JsonArrayIterator;
-import com.mewmew.fairy.v1.json.SimpleJsonIterator;
-import com.mewmew.fairy.v1.map.DefaultMapFunction;
-import com.mewmew.fairy.v1.pipe.ObjectPipe;
-import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
-import com.mewmew.fairy.v1.pipe.LineInputIterator;
-import com.mewmew.fairy.v1.spell.Help;
 import com.mewmew.fairy.v1.cli.Param;
+import com.mewmew.fairy.v1.json.JsonSpell;
+import com.mewmew.fairy.v1.json.SimpleJsonIterator;
+import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
+import com.mewmew.fairy.v1.pipe.ObjectPipe;
+import com.mewmew.fairy.v1.spell.Help;
+import org.apache.commons.io.LineIterator;
 
-import java.util.Map;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
 @Help(desc="hash join JSON stream with another json file")
 public class Join extends JsonSpell
@@ -55,7 +54,7 @@ public class Join extends JsonSpell
     {
         try {
             return new BaseObjectPipe<Map<String, Object>, Map<String, Object>>(
-                new com.mewmew.fairy.v1.json.map.Join(new SimpleJsonIterator(new LineInputIterator(join)), key));
+                new com.mewmew.fairy.v1.json.map.Join(new SimpleJsonIterator(new LineIterator(new FileReader(join))), key));
         }
         catch (IOException e) {
             throw new RuntimeException(e);

@@ -38,7 +38,7 @@ public abstract class JsonSpell extends BaseJsonSpell<Map<String, Object>>
     private String[] columnOrder;
 
     @Override
-    protected Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
+    public Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
     {
         Output<Map<String, Object>> o = JsonOutput.createOutput(out, outputFormat, columnOrder);
         return o ;

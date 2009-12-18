@@ -26,13 +26,14 @@ import com.mewmew.fairy.v1.pipe.MultiThreadedObjectPipe;
 import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
-import com.mewmew.fairy.v1.pipe.LineInputIterator;
 import com.mewmew.fairy.v1.map.MapFunction;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.LineIterator;
 
 @Help(desc = "execute command using input")
 public class Xargs extends LineSpell implements MapFunction<String, String>
@@ -101,19 +102,19 @@ public class Xargs extends LineSpell implements MapFunction<String, String>
                 public void run()
                 {
                     try {
-                        LineInputIterator err = new LineInputIterator(p.getErrorStream());
+                        LineIterator err = new LineIterator(new InputStreamReader(p.getErrorStream()));
                         while (err.hasNext()) {
                             err.next();
                         }
                     }
-                    catch (IOException e) {
+                    finally {
                     }
                 }
             }).start();
         }
-        LineInputIterator out = new LineInputIterator(p.getInputStream());
+        LineIterator out = new LineIterator(new InputStreamReader(p.getInputStream()));
         while (out.hasNext()) {
-            output.output(out.next());
+            output.output(out.nextLine());
         }
         int code = p.waitFor();
         if (code != 0) {
