@@ -24,7 +24,7 @@ import com.mewmew.fairy.v1.pipe.Output;
 import com.mewmew.fairy.v1.pipe.BaseObjectPipe;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
 import com.mewmew.fairy.v1.pipe.Source;
-import com.mewmew.fairy.v1.pipe.WrappedIterator;
+import com.mewmew.fairy.v1.pipe.MappingIterator;
 import com.mewmew.fairy.v1.spell.Help;
 import com.mewmew.fairy.v1.spell.BaseLineSpell;
 import com.mewmew.fairy.v1.map.MapFunction;
@@ -145,7 +145,7 @@ public class Cut extends BaseLineSpell<Map<String, Object>>
 
     public Iterator<Map<String, Object>> createIterator(InputStream in)
     {
-        return new WrappedIterator((Iterator<String>)new LineIterator(new InputStreamReader(in)), this);
+        return new MappingIterator((Iterator<String>)new LineIterator(new InputStreamReader(in)), this);
     }
 
     public static void main(String[] args) throws FileNotFoundException

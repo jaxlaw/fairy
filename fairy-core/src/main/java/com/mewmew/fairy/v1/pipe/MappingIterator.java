@@ -11,14 +11,14 @@ import java.io.IOException;
 
 import com.mewmew.fairy.v1.map.MapFunction;
 
-public class WrappedIterator<I, O> implements Iterator<O>
+public class MappingIterator<I, O> implements Iterator<O>
 {
     private final Iterator<I> iterator;
     private final MapFunction<I, O> mapFunction;
     private final Output<O> bufferedOutput ;
     private final Queue<O> queue ;
 
-    public WrappedIterator(Iterator<I> iterator, MapFunction<I, O> mapFunction)
+    public MappingIterator(Iterator<I> iterator, MapFunction<I, O> mapFunction)
     {
         this.iterator = iterator;
         this.mapFunction = mapFunction;
