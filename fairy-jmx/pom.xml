@@ -23,38 +23,33 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.mewmew</groupId>
-    <artifactId>fairy</artifactId>
-    <name>Fairy</name>
+    <parent>
+        <groupId>com.mewmew</groupId>
+        <artifactId>fairy-parent</artifactId>
+        <version>0.1</version>
+    </parent>
+
+    <artifactId>fairy-jmx</artifactId>
+    <name>fairy-jmx</name>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <description>
-        Fairy Magic !
+        Fairy JMX utils
     </description>
 
-    <scm>
-        <connection>scm:git:git://github.com/jaxlaw/fairy.git</connection>
-        <developerConnection>scm:git:git://github.com/jaxlaw/fairy.git</developerConnection>
-        <url>http://github.com/jaxlaw/fairy/tree/master</url>
-    </scm>
-
-  <modules>
-    <module>fairy-parent</module>
-    <module>fairy-jmx</module>
-    <module>fairy-core</module>
-  </modules>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
+    <dependencies>
+        <dependency>
+            <artifactId>commons-lang</artifactId>
+            <groupId>commons-lang</groupId>
+            <version>2.1</version>
+        </dependency>       
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>1.0-rc1</version>
+        </dependency>       
+    </dependencies>
+    
 </project>
