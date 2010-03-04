@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// original idea from martint. this is for illustration in a brown bag only. may not be production quality. use at your own risk.
 public class EasyJMX
 {
     private final Pattern pattern = Pattern.compile("(get|set|is)(.+)");
