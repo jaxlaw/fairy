@@ -138,6 +138,11 @@ public class Elf
         return s.substring(idx) ;
     }
 
+    public static String split(String s, String regex, int idx)
+    {
+        return s.split(regex)[idx] ;
+    }
+
     static DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder() ;
     static Map<String, DateTimeFormatter> formatters = ImmutableMap.<String, DateTimeFormatter>builder()
         .put("YY", builder.appendYear(4,4).toFormatter())

@@ -1,5 +1,6 @@
 package com.mewmew.fairy.v1.book;
 
+import com.espertech.esper.client.soda.ExpressionPrecedenceEnum;
 import com.mewmew.fairy.v1.json.JsonSpell;
 import com.mewmew.fairy.v1.map.MapFunction;
 import com.mewmew.fairy.v1.pipe.ObjectPipe;
@@ -181,14 +182,14 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
             List<Expression> exprs = stmtModel.getGroupByClause().getGroupByExpressions();
             for (Expression expr : exprs) {
                 StringWriter sw = new StringWriter();
-                expr.toEPL(sw);
+                expr.toEPL(sw, ExpressionPrecedenceEnum.AND);
                 String groupColumn = sw.toString();
                 List<SelectClauseElement> selects = stmtModel.getSelectClause().getSelectList();
                 for (SelectClauseElement select : selects) {
                     if (select instanceof SelectClauseExpression) {
                         sw = new StringWriter();
                         SelectClauseExpression expression = (SelectClauseExpression) select;
-                        expression.getExpression().toEPL(sw);
+                        expression.getExpression().toEPL(sw, ExpressionPrecedenceEnum.AND);
                         String exprStr = sw.toString();
                         if (exprStr.equals(groupColumn)) {
                             if (!StringUtils.isEmpty(expression.getAsName())) {
@@ -215,6 +216,8 @@ public class Esper extends JsonSpell implements MapFunction<Map<String, Object>,
         public OutputWrapper(Output<Map<String, Object>> delegate)
         {
             this.delegate = delegate;
+            if (this.delegate == null)
+                throw new IllegalArgumentException("delegate output is null!");
         }
 
         public void output(Map<String, Object> obj) throws IOException

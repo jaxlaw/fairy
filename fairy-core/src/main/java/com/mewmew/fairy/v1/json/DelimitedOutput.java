@@ -35,7 +35,7 @@ public class DelimitedOutput implements Output<Map<String, Object>>
     public DelimitedOutput setColumnOrdering(List<String> ordering)
     {
         this.ordering = ordering;
-        return null;
+        return this;
     }
 
     public void output(Map<String, Object> obj) throws IOException

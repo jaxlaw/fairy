@@ -39,8 +39,7 @@ public abstract class JsonSpell extends BaseJsonSpell<Map<String, Object>>
     @Override
     public Output<Map<String, Object>> createOutput(OutputStream out) throws IOException
     {
-        Output<Map<String, Object>> o = JsonOutput.createOutput(out, outputFormat, columnOrder);
-        return o ;
+        return JsonOutput.createOutput(out, outputFormat, columnOrder);
     }
 
     @Override
@@ -55,7 +54,7 @@ public abstract class JsonSpell extends BaseJsonSpell<Map<String, Object>>
                     return OutputFormat.valueOf(v);
                 }
                 catch (IllegalArgumentException e) {
-                    return OutputFormat.COMPACT;
+                    return OutputFormat.PRETTY;
                 }
             }
         }};

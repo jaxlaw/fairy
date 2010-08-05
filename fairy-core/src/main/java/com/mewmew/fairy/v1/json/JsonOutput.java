@@ -32,61 +32,51 @@ import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 
-public class JsonOutput implements Output<Map<String, Object>>
-{
+public class JsonOutput implements Output<Map<String, Object>> {
     static final JsonFactory FACTORY = new JsonFactory();
     static final ObjectMapper MAPPER = new ObjectMapper();
 
-    JsonGenerator jgen ;
-    ObjectMapper mapper ;
+    JsonGenerator jgen;
+    ObjectMapper mapper;
 
-    public JsonOutput(OutputStream out) throws IOException
-    {
+    public JsonOutput(OutputStream out) throws IOException {
         this(FACTORY.createJsonGenerator(out, JsonEncoding.UTF8), MAPPER);
     }
 
-    public JsonOutput(JsonGenerator jgen) throws IOException
-    {
+    public JsonOutput(JsonGenerator jgen) throws IOException {
         this(jgen, MAPPER);
     }
 
-    public JsonOutput(JsonGenerator jsonGenerator, ObjectMapper mapper) throws IOException
-    {
+    public JsonOutput(JsonGenerator jsonGenerator, ObjectMapper mapper) throws IOException {
         this.jgen = jsonGenerator;
         this.mapper = mapper;
         jgen.writeStartArray();
     }
 
-    public void output(Map<String, Object> obj) throws IOException
-    {
+    public void output(Map<String, Object> obj) throws IOException {
         mapper.writeValue(jgen, obj);
     }
 
-    public void close() throws IOException
-    {
+    public void close() throws IOException {
         jgen.writeEndArray();
         jgen.writeRawValue("\n");
         jgen.close();
     }
 
-    public JsonGenerator getJgen()
-    {
+    public JsonGenerator getJgen() {
         return jgen;
     }
 
-    public ObjectMapper getMapper()
-    {
+    public ObjectMapper getMapper() {
         return mapper;
     }
 
-    public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format) throws IOException
-    {
+    public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format) throws IOException {
         return createOutput(out, format, null);
     }
 
-    public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format, String[] columnOrder) throws IOException
-    {
-        JsonGenerator jsonGenerator ;
+    public static Output<Map<String, Object>> createOutput(OutputStream out, OutputFormat format, String[] columnOrder) throws IOException {
+        JsonGenerator jsonGenerator;
         switch (format) {
             case PRETTY:
                 jsonGenerator = FACTORY.createJsonGenerator(out, JsonEncoding.UTF8);
@@ -97,12 +87,21 @@ public class JsonOutput implements Output<Map<String, Object>>
                 jsonGenerator.setPrettyPrinter(new LinePrettyPrinter());
                 return new JsonOutput(jsonGenerator, JsonOutput.MAPPER);
             case CSV:
-                return new DelimitedOutput(out, ",").setColumnOrdering(Arrays.asList(columnOrder));
+                if (columnOrder != null) {
+                    return new DelimitedOutput(out, ",").setColumnOrdering(Arrays.asList(columnOrder));
+                }
+                return new DelimitedOutput(out, ",");
             case TAB:
-                return new DelimitedOutput(out, "\t").setColumnOrdering(Arrays.asList(columnOrder));
+                if (columnOrder != null) {
+                    return new DelimitedOutput(out, "\t").setColumnOrdering(Arrays.asList(columnOrder));
+                }
+                return new DelimitedOutput(out, "\t");
             case WIKI:
-                return new DelimitedOutput(out, "|", "|", "|").setColumnOrdering(Arrays.asList(columnOrder));
+                if (columnOrder != null) {
+                    return new DelimitedOutput(out, "|", "|", "|").setColumnOrdering(Arrays.asList(columnOrder));
+                }
+                return new DelimitedOutput(out, "|", "|", "|");
         }
-        throw new IllegalArgumentException(String.format("unknown output format %s", format));        
+        throw new IllegalArgumentException(String.format("unknown output format %s", format));
     }
 }
